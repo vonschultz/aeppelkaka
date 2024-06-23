@@ -1,0 +1,56 @@
+<?php
+
+//  Aeppelkaka, a program which can help a stundent learning facts.
+//  Copyright (C) 2003, 2006, 2022, 2024 Christian von Schultz
+//
+//  Permission is hereby granted, free of charge, to any person
+//  obtaining a copy of this software and associated documentation
+//  files (the “Software”), to deal in the Software without
+//  restriction, including without limitation the rights to use, copy,
+//  modify, merge, publish, distribute, sublicense, and/or sell copies
+//  of the Software, and to permit persons to whom the Software is
+//  furnished to do so, subject to the following conditions:
+//
+//  The above copyright notice and this permission notice shall be
+//  included in all copies or substantial portions of the Software.
+//
+//  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+//  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+//  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+//  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+//  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+//  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+//  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+//  SOFTWARE.
+//
+// SPDX-License-Identifier: MIT
+
+// You must include config.php first.
+require_once("menu_" . $c["lang"] . ".php");
+
+$l["page title"] = "Aeppelkaka";
+$l["welcome"] = "Välkommen till din Aeppelkaka, %s!";
+$l["No lessons"] = "Inga lektioner har skapats än.";
+$l["Lessons:"] = "Välj en av följande lektioner:";
+$l["Lesson"] = "Lektion";
+$l["lessonid"] = "Lektion";
+$l["New"] = "Nya";
+$l["newid"] = "Nya";
+$l["Expired"] = "Åldrade";
+$l["expiredid"] = "Åldrade";
+$l["Learned"] = "Inlärda";
+$l["learnedid"] = "Inlärda";
+$l["Total"] = "Totalt";
+$l["totalid"] = "Totalt";
+$l["All in all"] = "Sammanlagt";
+$l["<p>intro</p>"] = (
+    "<p>Det här är Aeppelkaka, ett program för inlärning " .
+    "av fakta. Programmet fungerar genom att använda virtuella\n" .
+    "<em>kort</em>, se <a href=\"help\" title=\"Hjälpsidan " .
+    "för Aeppelkaka\">manualen</a> om du vill veta mer om " .
+    "systemet.</p>\n\n"
+);
+$l["Enter new lesson name"] = (
+    "För att skapa en ny lektion, var god skriv in dess namn här:"
+);
+$l["Submit"] = "Skapa";

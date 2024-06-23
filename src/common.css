@@ -1,0 +1,196 @@
+/*  Aeppelkaka, a program which can help a stundent learning facts.
+ *  Copyright (C) 2021, 2023, 2024 Christian von Schultz
+ *
+ *  Permission is hereby granted, free of charge, to any person
+ *  obtaining a copy of this software and associated documentation
+ *  files (the “Software”), to deal in the Software without
+ *  restriction, including without limitation the rights to use, copy,
+ *  modify, merge, publish, distribute, sublicense, and/or sell copies
+ *  of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ *  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ *  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ *  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ *
+ * SPDX-License-Identifier: MIT
+ */
+#content { margin-left: 5%;
+           margin-top: 5%;
+           margin-right: 15%;
+           margin-bottom: 3%; }
+body { margin: 0pt;
+       padding: 0pt;
+       color: black;
+       background: white;
+       font-family: Times, serif;
+       font-size: 12pt; }
+h1 { font-family: sans-serif; }
+table.main { margin-left: 10%;
+             margin-right: 10%;
+             margin-bottom: 5mm;
+             width: 80%; }
+table.main th { text-align: left; }
+table.main td { text-align: left; }
+table.main th.date { text-align: center; }
+table.main td.date { text-align: center; }
+table.main th.numbers { text-align: right; }
+table.main td.numbers { text-align: right; }
+table.main tr:hover { background: #eef; }
+
+table#menu { background: cyan;
+             color: blue; 
+             border: outset 2px; 
+             float: right; }
+tr.menuline { text-align: center; }
+td.menuitem { font-family: sans-serif;
+              font-weight: bold; }
+
+table#menu strong.nolink { background: cyan;
+                           color: black; }
+
+a.menulink { text-decoration: none;
+             color: blue; background: inherit; }
+a.menulink:hover { color: black; background: white; }
+a.menulink:focus { color: black; background: white; }
+a.menulink:active { color: red; }
+
+a { text-decoration: underline;
+    font-family: inherit; 
+    font-size: inherit; 
+    background: white;
+    color: blue;
+    border: 0px solid white;
+    padding: 0px; }
+
+#aemenubar { font-family: arial, helvetica, sans-serif;
+             font-size: small; }
+#aemenubar a { background: inherit; }
+
+/*
+.link { text-decoration: underline;
+        font-family: inherit;
+        font-size: inherit; 
+        background: white;
+        color: blue;
+        cursor: pointer; } */
+
+div.error:not(#chesspgnviewError):not(#chesspgneditError) { margin: 1cm;
+            padding: 1cm;
+            border: inset red; 
+            background: rgb(255, 225, 225);
+            color: rgb(99, 0, 0);
+            font-weight: bold; }
+
+div.error a { background: rgb(255, 225, 225);
+              color: blue; }
+
+.inset { border: 2pt inset black;
+         margin: 5pt;
+         padding: 5pt; }
+
+.yellow { background: rgb(255, 255, 204);
+          color: black; }
+
+.cyan { background: rgb(204, 255, 255);
+        color: black; }
+
+.pink { background: rgb(255, 204, 255);
+        color: black; }
+
+h2 { padding-top: 3mm; }
+
+p.cardfronttitle { font-weight: bold;
+                   font-size: smaller;
+                   margin-left: 1cm;
+                   margin-bottom: 0cm; }
+p.cardbacktitle { font-weight: bold;
+                  font-size: smaller;
+                  margin-left: 1cm;
+                  margin-bottom: 0cm; }
+
+div.cardfront { margin-left: 1cm;
+                margin-top: 0cm;
+                margin-right: 5%;
+                border: inset black;
+                padding-left: 5mm; }
+
+div.cardback { margin-left: 1cm;
+               margin-top: 0cm;
+               margin-right: 5%;
+               border: inset black;
+               padding-left: 5mm;
+               font-family: etl, Times, serif;
+               /*line-height: 1cm;*/ }
+
+:not(piece).black {/* color: rgb(0,0,0);*/
+       /*  background: rgb(0,0,0);*/
+         display: none; }
+
+:not(piece).black #hiddenimage { display: none; }
+
+.hidden { display: none; }
+
+input#seconds { border: 0px solid white;
+                font-family: inherit;
+                font-size: inherit;
+                font-weight: bold;
+                padding: 0px;
+                margin: 0px;
+                border: 0px solid white;
+                width: 2em; 
+                text-align: center; }
+
+p#question { display: none; }
+
+div#cardback em { text-decoration: underline; }
+
+code { color: rgb(0, 128, 0);
+       background: inherit; }
+
+#removepara { position: absolute;
+              left: 1pt;
+              top: 0pt;
+              margin: 0pt; }
+
+input.dangerous { background: red;
+                  color: black; 
+                  border: 2pt outset yellow; }
+
+@media only screen and (max-width: 600px) {
+    h1 { font-size: 10pt; }
+
+    #content {
+        margin-left: 0px;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+    }
+
+    #content > p {
+        font-size: 8pt;
+    }
+
+    p {
+        font-size: 10pt;
+    }
+
+    div.cardfront {
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+    div.cardback {
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+
+}

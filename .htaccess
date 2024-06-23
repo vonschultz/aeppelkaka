@@ -1,0 +1,65 @@
+#  Aeppelkaka, a program which can help a stundent learning facts.
+#  Copyright (C) 2021, 2023, 2024 Christian von Schultz
+#
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation
+#  files (the “Software”), to deal in the Software without
+#  restriction, including without limitation the rights to use, copy,
+#  modify, merge, publish, distribute, sublicense, and/or sell copies
+#  of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+#  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+#  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
+#
+# SPDX-License-Identifier: MIT
+
+RewriteEngine on
+RewriteBase /aeppelkaka/
+
+RewriteRule ^[^/]+\.php$ - [L]
+RewriteRule ^[^/]+\.svg$ - [L]
+RewriteRule ^[^/]+\.pdf$ - [L]
+RewriteRule ^[^/]+\.css$ - [L]
+RewriteRule ^[^/]+\.js$ - [L]
+RewriteRule ^[^/]+\.png$ - [L]
+RewriteRule ^[^/]+\.gif$ - [L]
+RewriteRule newlesson/?$ newlesson.php [L]
+RewriteRule setup/?$ setup.php [L]
+RewriteRule help/?$ help.php [L]
+RewriteRule users/?$ users.php [L]
+RewriteRule logout/?$ login.php?logout=true [L]
+RewriteRule ^([^/]+)/?$ lesson.php?lesson=$1
+RewriteRule ^([^/]+)/&(.+)$ lesson.php?lesson=$1&$2
+RewriteRule ^([^/]+)/properties$ lesson.php?lesson=$1&action=properties
+RewriteRule ^([^/]+)/parknew$ lesson.php?lesson=$1&action=parknew
+RewriteRule ^([^/]+)/unparknew$ lesson.php?lesson=$1&action=unparknew
+RewriteRule ^([^/]+)/cards.json$ exportcards.php?lesson=$1
+RewriteRule ^([^/]+)/statistics/?$ statistics.php?lesson=$1
+RewriteRule ^([^/]+)/statistics/(.*)$ statistics.php?lesson=$1&$2
+RewriteRule ^([^/]+)/addcard$ addcard.php?lesson=$1
+RewriteRule ^([^/]+)/graph$ graph.php?lesson=$1
+RewriteRule ^([^/]+)/graph/debug$ graph.php?lesson=$1&debug=1
+RewriteRule ^([^/]+)/graph/(.*[^g])$$ graph.php?lesson=$1&$2
+RewriteRule ^([^/]+)/import_from_lesson_([^/]+)$ import.php?lesson=$1&from_lesson_id=$2
+RewriteRule ^([^/]+)/list_cardbacks list_cardbacks.php?lesson=$1
+RewriteRule ^([^/]+)/list_cardbacks/(.*[^g])$$ list_cardbacks.php?lesson=$1&$2
+RewriteRule ^([^/]+)/forgetstats$ forgetstats.php?lesson=$1
+RewriteRule ^([^/]+)/forgetstats/debug$ forgetstats.php?lesson=$1&debug=1
+RewriteRule ^([^/]+)/testexpired/?$ testexpired.php?lesson=$1
+RewriteRule ^([^/]+)/testexpired/(.*)$ testexpired.php?lesson=$1&$2
+RewriteRule ^([^/]+)/learncard/?$ learncard.php?lesson=$1
+RewriteRule ^([^/]+)/learncard/(.*)$ learncard.php?lesson=$1&$2
+RewriteRule ^([^/]+)/newlylearnt/?$ newlylearnt.php?lesson=$1
+RewriteRule ^([^/]+)/newlylearnt/(.*)$ newlylearnt.php?lesson=$1&$2
+RewriteRule ^([^/]+)/removecard/?$ removecard.php?lesson=$1
+RewriteRule ^([^/]+)/removecard/(.*)$ removecard.php?lesson=$1&$2
