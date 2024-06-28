@@ -77,12 +77,6 @@ function add_stylesheet($filename, $stylename, $alternate = false)
     $html["stylesheets"][] = array($filename, $stylename, $alternate);
 }
 
-function add_script($filename)
-{
-    global $html;
-    $html["scripts"][] = $filename;
-}
-
 function hidden($name, $value)
 {
     echo (
@@ -121,8 +115,6 @@ function head($title, $relative_url)
     global $html, $c;
 
     $stylesheets = isset($html["stylesheets"]) ? $html["stylesheets"] : array();
-    $scripts = isset($html["scripts"]) ? $html["scripts"] : array();
-
     echo "<head>\n";
     echo "  <meta charset=\"utf-8\" />\n";
     echo ("  <meta name=\"viewport\" content=\""
@@ -140,11 +132,9 @@ function head($title, $relative_url)
             "\" rel=\"stylesheet\" type=\"text/css\"/>\n";
     }
 
-    foreach ($scripts as $key => $script) {
-        echo "  <script type=\"text/javascript\" src=\"";
-        echo nice_url($script);
-        echo "\" ></script>\n";
-    }
+    echo "  <script type=\"text/javascript\" src=\"";
+    echo nice_url($c["webdir"] . "/" . $c["manifest"]["main.js"]);
+    echo "\" ></script>\n";
 
     // The ereg_replace might be good if relative references is used
     // in the code, and it also makes it look nicer to someone viewing

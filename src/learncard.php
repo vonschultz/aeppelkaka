@@ -148,19 +148,6 @@ function check_time_for_next_action()
     }
 }
 
-function add_scripts()
-{
-    global $c, $action;
-
-    if ($action == "short-term2long-term") {
-        add_script($c["webdir"] . "/" . $c["manifest"]["main.js"]);
-    } else {
-        add_script($c["webdir"] . "/" . $c["manifest"]["main.js"]);
-        add_script($c["webdir"] . "/countdown.js");
-    }
-}
-
-
 function do_new2short_term()
 {
     global $card, $b, $l;
@@ -210,7 +197,6 @@ begin_html();
 
 add_menu_items();
 add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-add_scripts();
 set_time_for_next_action();
 
 head(

@@ -29,15 +29,15 @@ event.setSeconds((now.getSeconds() + 30) % 60);
 event.setMinutes(now.getMinutes() + Math.floor((now.getSeconds() + 30)/60));
 
 var seconds = (event-now) / 1000;
-window.setTimeout("update();", 1000);
+window.setTimeout("updateCountdown();", 1000);
 
-function update()
+export function updateCountdown()
 {
     if (document.getElementById('seconds') && document.getElementById('hide30')) {
         now = new Date();
         seconds = Math.round((event-now) / 1000);
         document.getElementById('seconds').value = seconds;
-        window.setTimeout("update();", 1000);
+        window.setTimeout("updateCountdown();", 1000);
         if (seconds <= 0) {
             document.getElementById('hide30').style.setProperty('display', 'none', null);
         }

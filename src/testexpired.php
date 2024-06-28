@@ -72,13 +72,6 @@ function debug()
     );
 }
 
-function add_scripts()
-{
-    global $c;
-
-    add_script($c["webdir"] . "/" . $c["manifest"]["main.js"]);
-}
-
 function test_expired()
 {
     global $card, $b, $l, $remembered;
@@ -105,7 +98,6 @@ begin_html();
 
 add_menu_items();
 add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-add_scripts();
 
 head(
     sprintf($l["page title %s"], lesson_user()),

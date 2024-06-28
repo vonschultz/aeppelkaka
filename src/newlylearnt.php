@@ -55,13 +55,6 @@ function add_menu_items()
     menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
 }
 
-function add_scripts()
-{
-    global $c;
-
-    add_script($c["webdir"] . "/" . $c["manifest"]["main.js"]);
-}
-
 function read_newly_learnt()
 {
     /* We read in the card_id of all the cards that were created today
@@ -128,7 +121,6 @@ begin_html();
 
 add_menu_items();
 add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-add_scripts();
 
 head(
     sprintf($l["page title %s"], lesson_user()),
