@@ -39,3 +39,4 @@ $l["Number of short term cards: %s"] = "Antal halv-lärda kort: %s";
 
 // But this is proper UTF-8:
 $l["graph page title %s"] = "Planering för repetition, lektion %s";
+$l["forgetstats debugpage title %s"] = "[Debug] Prestationsgraf, lektion %s";

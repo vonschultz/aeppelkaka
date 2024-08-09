@@ -34,16 +34,22 @@ load_config();
 require_once("html.php");
 require_once("help_" . $c["lang"] . ".php");
 
-begin_html();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-menu_item($l["Lessons"], "./", $l["Main page with lessons"]);
-menu_item($l["Setup"], "setup", $l["Aeppelkaka settings"]);
-menu_item($l["Logout"], "logout", $l["Logout of Aeppelkaka"]);
-head($l["Help for Aeppelkaka"], "help.php");
-body();
+ob_start();
+
 echo "<h1>" . $l["Help for Aeppelkaka"] . "</h1>\n";
 echo $l["What is Aeppelkaka"];
 echo $l["Browser requirements"];
 
-end_body();
-end_html();
+$body = ob_get_clean();
+
+$url['this'] = 'help';
+
+$smarty = get_smarty();
+$smarty->assign('title', $l["Help for Aeppelkaka"]);
+$smarty->assign('relative_url', "help");
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

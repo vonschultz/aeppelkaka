@@ -61,7 +61,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows != 1) {
     $result->close();
-    error("Permission denied");
+    error_page("Permission denied");
     exit;
 }
 
@@ -69,7 +69,7 @@ $row = $result->fetch_object();
 $result->close();
 
 if (!is_object($row) || $row->is_sharing != 1) {
-    error("Permission denied");
+    error_page("Permission denied");
     exit;
 }
 
@@ -97,12 +97,12 @@ if (!empty($_POST['importcards']) && is_array($_POST['importcards'])) {
     $row = $result->fetch_object();
     $result->close();
     if (count($_POST['importcards']) != $row->count) {
-        error("Desired cards not found");
         mailerror(
             "Suspicious attempt to import cards that " .
             "aren't all shared or do not exist. Request:\n" .
             var_export($_REQUEST, true)
         );
+        error_page("Desired cards not found");
         exit;
     }
 

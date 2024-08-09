@@ -51,31 +51,6 @@ function do_http_headers()
     header("Pragma: no-cache");                          // HTTP/1.0
 }
 
-$html["has_begun"] = false;
-function begin_html()
-{
-    global $c, $l, $html;
-
-    if (!headers_sent()) {
-        do_http_headers();
-    }
-
-    echo "<!DOCTYPE html>\n";
-    echo "<html lang=\"";
-    echo $c["lang"] . "\">\n\n";
-    $html["has_begun"] = true;
-}
-
-function end_html()
-{
-    echo "</html>\n";
-}
-
-function add_stylesheet($filename, $stylename, $alternate = false)
-{
-    global $html;
-    $html["stylesheets"][] = array($filename, $stylename, $alternate);
-}
 
 function hidden($name, $value)
 {
@@ -110,110 +85,22 @@ function nice_url($url)
     return htmlspecialchars(preg_replace("%([^:]/)/+%", "\\1", $url));
 }
 
-function head($title, $relative_url)
+function error_page($message, $relative_url = '.')
 {
-    global $html, $c;
-
-    $stylesheets = isset($html["stylesheets"]) ? $html["stylesheets"] : array();
-    echo "<head>\n";
-    echo "  <meta charset=\"utf-8\" />\n";
-    echo ("  <meta name=\"viewport\" content=\""
-          . "width=device-width, "
-          . "height=device-height, "
-          . "user-scalable=no, "
-          . "initial-scale=1, "
-          . "target-densitydpi=device-dpi, "
-          . "maximum-scale=1.0"
-          . "\" />\n");
-
-    foreach ($stylesheets as $style) {
-        echo "  <link href=\"" .
-            nice_url($style[0]) .
-            "\" rel=\"stylesheet\" type=\"text/css\"/>\n";
-    }
-
-    echo "  <script type=\"text/javascript\" src=\"";
-    echo nice_url($c["webdir"] . "/" . $c["manifest"]["main.js"]);
-    echo "\" ></script>\n";
-
-    // The ereg_replace might be good if relative references is used
-    // in the code, and it also makes it look nicer to someone viewing
-    // the html source code.
-    echo "  <base href=\"";
-    echo nice_url($c["webdir"] . "/" . $relative_url);
-    echo "\"/>\n";
-    echo "  <title>" . htmlspecialchars($title) . "</title>\n";
-    echo "</head>\n\n";
-    $html["has_head"] = true;
-}
-
-function menu_item($alt, $url, $title, $img_url = "")
-{
-    global $html;
-    $html["menu"][] = array(
-        "alt" => $alt,
-        "url" => $url,
-        "title" => $title,
-        "img_url" => $img_url
+    global $l, $url;
+    $url['this'] = $relative_url;
+    $smarty = get_smarty();
+    $smarty->assign('title', $l['Error']);
+    $smarty->assign('relative_url', $relative_url);
+    $smarty->assign(
+        'body',
+        "<div class=\"error\"><p>" . $message . "</p></div>\n\n"
     );
-}
-
-function body($focus = "")
-{
-    global $html;
-
-    if (empty($focus)) {
-        echo "<body>\n\n";
-    } else {
-        echo "<body onload=\"document.getElementById('" . htmlentities($focus) .
-            "').focus()\">\n\n";
-    }
-
-    echo "<div id=\"content\">\n";
-
-    if (!empty($html["menu"])) {
-        echo "<table id=\"menu\">\n";
-        foreach ($html["menu"] as $item) {
-            if (empty($item["img_url"])) {
-                echo "  <tr class=\"menuline\">\n";
-                echo "    <td class=\"menuitem\">";
-                echo "<a class=\"menulink\" href=\"" .
-                    htmlspecialchars($item["url"]) . "\" ";
-                echo "title=\"" . $item["title"] . "\">";
-                echo $item["alt"];
-                echo "</a></td>\n  </tr>\n";
-            }
-        }
-        echo "</table>\n\n";
-    }
-    $html["has_body"] = true;
-}
-
-function end_body()
-{
-    echo "</div>\n";
-    echo "</body>\n\n";
-}
-
-function error($message, $end = true)
-{
-    global $html, $l, $c;
-    if (empty($html["has_begun"])) {
-        begin_html();
-    }
-    if (empty($html["has_head"])) {
-        add_stylesheet(nice_url($c["webdir"] . "/" . $c["manifest"]["main.css"]), "");
-        head($l["Error"], ".");
-    }
-    if (empty($html["has_body"])) {
-        body();
-    }
-    echo "<div class=\"error\"><p>" . $message . "</p></div>\n\n";
-    if ($end) {
-        end_body();
-        end_html();
-        exit;
-    }
+    $smarty->assign('l', $l);
+    $smarty->assign('url', $url);
+    do_http_headers();
+    $smarty->display('layout.tpl');
+    exit;
 }
 
 function print_card($cardfront, $cardback, $backvisible = true)
@@ -329,14 +216,6 @@ function testform($card_id, $target, $hiddens = array())
     echo "</p>";
 
     end_form();
-
-
-    begin_form("removecard");
-    echo "<p id=\"removepara\">";
-    hidden("card", $card_id);
-    echo "<input type=\"submit\" value=\"" . $l["Remove this card"] . "\"/>";
-    echo "</p>\n\n";
-    end_form();
 }
 
 function exception_handler($exception)
@@ -354,7 +233,7 @@ function exception_handler($exception)
         "From: " . $c["aeppelkaka mail"]
     );
 
-    error(
+    error_page(
         "An exception occurred. This is typically due to an error in the program. " .
         ($mailed ?
          "The webmaster has been contacted." :

@@ -38,30 +38,11 @@ require_once("html.php");
 require_once("lesson_" . $c["lang"] . ".php");
 $lesson = $_REQUEST['lesson'];
 
-
-function add_menu_items()
-{
-    global $l;
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 //* void main(void), so to speak
 
 assert_lesson($lesson);
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/"
-);
-
-body();
+ob_start();
 
 echo "<h1>" . sprintf($l["lesson %s"], lesson_user()) . "</h1>\n\n";
 
@@ -86,6 +67,21 @@ while ($row = $result->fetch_assoc()) {
 echo "</table>\n";
 $result->close();
 
-end_body();
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'list_cardbacks';
+$url['thislesson'] = './';
+
+
+$smarty = get_smarty();
+
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/list_cardbacks");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

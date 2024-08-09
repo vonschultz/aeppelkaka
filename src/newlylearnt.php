@@ -35,25 +35,11 @@ load_config();
 require_once("backend.php");
 require_once("html.php");
 require_once("testexpired_" . $c["lang"] . ".php");
-$remembered = $_REQUEST['remembered'];
-$card = $_REQUEST['card'];
+$remembered = $_REQUEST['remembered'] ?? null;
+$card = $_REQUEST['card'] ?? null;
 $lesson = $_REQUEST['lesson'];
 
 assert_lesson($lesson);
-
-function add_menu_items()
-{
-    global $l;
-    menu_item(
-        lesson_user(),
-        "./",
-        sprintf($l["lesson %s"], lesson_user())
-    );
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
 
 function read_newly_learnt()
 {
@@ -107,27 +93,19 @@ function test_newly_learnt()
     }
     if (!empty($_SESSION['tomorrowcards'])) {
         $random_key = array_rand($_SESSION['tomorrowcards']);
-        testform($_SESSION['tomorrowcards'][$random_key], "newlylearnt");
+        $card_id = $_SESSION['tomorrowcards'][$random_key];
+        testform($card_id, "newlylearnt");
         unset($_SESSION['tomorrowcards'][$random_key]);
-    } else {
-        paragraph($l["done"]);
+        return $card_id;
     }
+    paragraph($l["done"]);
+    return null;
 }
 
 
 //* void main(void), so to speak
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/newlylearnt"
-);
-
-body("testinput");
+ob_start();
 
 if (empty($_SESSION['tomorrowcards']) && empty($card) && empty($remembered)) {
     read_newly_learnt();
@@ -135,10 +113,31 @@ if (empty($_SESSION['tomorrowcards']) && empty($card) && empty($remembered)) {
 
 echo "<h1>" . sprintf($l["test cards in %s"], lesson_user()) . "</h1>\n\n";
 
-test_newly_learnt();
+$card_id = test_newly_learnt();
 
 //debug();
 
-end_body();
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'newlylearnt';
+$url['thislesson'] = './';
+
+if (!empty($card_id)) {
+    $url['card'] = array(
+        'removecard' => sprintf('removecard/card=%d', $card_id)
+    );
+}
+
+$smarty = get_smarty();
+$smarty->assign('focus_element', 'testinput');
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/newlylearnt");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('card_id', $card_id);
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

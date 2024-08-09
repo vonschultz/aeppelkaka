@@ -44,20 +44,6 @@ $card = isset($_REQUEST['card']) ? $_REQUEST['card'] : "";
 
 assert_lesson($lesson);
 
-function add_menu_items()
-{
-    global $l;
-    menu_item(
-        lesson_user(),
-        "./",
-        sprintf($l["lesson %s"], lesson_user())
-    );
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function debug()
 {
     global $l, $b, $c, $html, $action;
@@ -105,6 +91,8 @@ function learnform($card)
     echo "</p>\n";
 
     end_form();
+
+    return $card->card_id;
 }
 
 function set_time_for_next_action()
@@ -131,9 +119,6 @@ function check_time_for_next_action()
             if (!empty($card)) {
                 make_short_term($card);
             }
-            if ($b["number of new cards"] != 0) {
-                learnform(reset($b["new cards"]));
-            }
             echo "<form action=\"learncard\" method=\"post\" accept-charset=\"UTF-8\">\n";
             echo "<p>";
             hidden("action", "short-term2long-term");
@@ -156,7 +141,7 @@ function do_new2short_term()
         make_short_term($card);
     }
     if ($b["number of new cards"] != 0) {
-        learnform(reset($b["new cards"]));
+        $card_id = learnform(reset($b["new cards"]));
     } else {
         echo "<form action=\"learncard\" method=\"post\" accept-charset=\"UTF-8\">\n";
         echo "<p>";
@@ -164,6 +149,8 @@ function do_new2short_term()
         echo $l["learned everything"] . "</p>\n";
         echo "</form>\n";
     }
+
+    return $card_id ?? null;
 }
 
 function short_term2long_term()
@@ -180,50 +167,65 @@ function short_term2long_term()
     if ($b["number of short term cards"] != 0) {
         srand(make_seed());
         shuffle($b["short term cards"]); // array in random order
+        $card_id = reset($b["short term cards"])->card_id;
         testform(
-            reset($b["short term cards"])->card_id,
+            $card_id,
             "learncard",
             array("action" => "short-term2long-term")
         );
     } else {
         paragraph($l["done"]);
     }
+
+    return $card_id ?? null;
 }
 
 
 //* void main(void), so to speak
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
 set_time_for_next_action();
 
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/learncard"
-);
-
-if ($action === "short-term2long-term") {
-    body("testinput");            // testinput gets focus.
-} else {
-    body();
-}
+ob_start();
 
 read_card_directory();
 
 echo "<h1>" . sprintf($l["learn cards in %s"], lesson_user()) . "</h1>\n\n";
 
+$card_id = null;
+
 if (check_time_for_next_action() == "continue") {
     if ($action != "short-term2long-term") {
-        do_new2short_term();
+        $card_id = do_new2short_term();
     } else {
-        short_term2long_term();
+        $card_id = short_term2long_term();
     }
 }
 
 //debug();
 
-end_body();
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'learncard';
+$url['thislesson'] = './';
+
+if (!empty($card_id)) {
+    $url['card'] = array(
+        'removecard' => sprintf('removecard/card=%d', $card_id)
+    );
+}
+
+$smarty = get_smarty();
+if ($action === "short-term2long-term") {
+    $smarty->assign('focus_element', 'testinput');
+}
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/learncard");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('card_id', $card_id);
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

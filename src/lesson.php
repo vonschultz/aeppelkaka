@@ -47,15 +47,6 @@ $repetition_algorithm = isset($_POST['repetition_algorithm']) ? $_POST['repetiti
 assert_lesson($lesson);
 forget_short_term_cards();
 
-function add_menu_items()
-{
-    global $l;
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function table($n)
 {
     global $l, $b;
@@ -200,18 +191,8 @@ if ($action == "properties") {
         remove_lesson();
     }
 
-    begin_html();
 
-    menu_item(lesson_user(), "./", sprintf($l["lesson %s"], lesson_user()));
-    add_menu_items();
-    add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-
-    head(
-        sprintf($l["lesson properties for %s"], lesson_user()),
-        "/" . urlencode(lesson_filename()) . "/"
-    );
-
-    body();
+    ob_start();
 
     printf(
         "<h1>" . $l["Change properties for %s"] . "</h1>\n",
@@ -230,7 +211,7 @@ if ($action == "properties") {
     }
 
     if (!empty($error)) {
-        error($error, false);
+        echo "<div class=\"error\"><p>" . $error . "</p></div>\n";
     }
 
     echo $l["properties changing text"];
@@ -293,10 +274,28 @@ if ($action == "properties") {
     );
     end_form();
 
-    end_body();
-    end_html();
+    $body = ob_get_clean();
+
+    $url = path_join_urls('..', $url);
+    $url['this'] = 'properties';
+    $url['thislesson'] = './';
+
+    $smarty = get_smarty();
+    $smarty->assign(
+        'title',
+        sprintf($l["lesson properties for %s"], lesson_user())
+    );
+    $smarty->assign('relative_url', urlencode(lesson_filename()) . "/properties");
+    $smarty->assign('lesson_name', lesson_user());
+    $smarty->assign('body', $body);
+
+    $smarty->assign('l', $l);
+    $smarty->assign('url', $url);
+    do_http_headers();
+    $smarty->display('layout.tpl');
 } else {
     $url['this'] = $b['lesson filename'];
+    $url['thislesson'] = $b['lesson filename'];
     $smarty = get_smarty();
 
     $db = get_db();

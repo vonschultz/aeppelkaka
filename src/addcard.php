@@ -43,20 +43,6 @@ $repetition_algorithm = $_POST['repetition_algorithm'] ?? null;
 
 assert_lesson($lesson);
 
-function add_menu_items()
-{
-    global $l;
-    menu_item(
-        lesson_user(),
-        "./",
-        sprintf($l["lesson %s"], lesson_user())
-    );
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function debug()
 {
     global $l, $b, $c, $html;
@@ -173,7 +159,7 @@ function add_card()
             $cardfront = "";
             $cardback = "";
         } else {
-            error(xml_error_message(), false); // false = don't end the document.
+            echo "<div class=\"error\"><p>" . xml_error_message() . "</p></div>\n";
             // $carfront and $cardback are not reset, so that the user gets to
             // edit them and make them well-formed. The card is, of course, not added.
         }
@@ -182,16 +168,7 @@ function add_card()
 
 //* void main(void), so to speak
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/addcard"
-);
-
-body();
+ob_start();
 
 echo "<h1>" . sprintf($l["add to %s"], lesson_user()) . "</h1>\n\n";
 
@@ -205,6 +182,25 @@ form();
 
 // debug();
 
-end_body();
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'learncard';
+$url['thislesson'] = './';
+
+if (!empty($card_id)) {
+    $url['card'] = array(
+        'removecard' => sprintf('removecard/card=%d', $card_id)
+    );
+}
+
+$smarty = get_smarty();
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/addcard");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('body', $body);
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+
+do_http_headers();
+$smarty->display('layout.tpl');

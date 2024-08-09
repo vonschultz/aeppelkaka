@@ -47,20 +47,6 @@ $mysqlfulltext = isset($_REQUEST["mysqlfulltext"]) ? $_REQUEST["mysqlfulltext"] 
 
 forget_short_term_cards();
 
-function add_menu_items()
-{
-    global $l;
-    menu_item(
-        lesson_user(),
-        "./",
-        sprintf($l["lesson %s"], lesson_user())
-    );
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function debug()
 {
     global $l, $b, $c, $html, $action;
@@ -296,7 +282,9 @@ function search_and_list($card_id, $cardfront, $cardback)
     }
 
     if ($stmt === false || $result === false || $result->num_rows == 0) {
-        error($l["No cards were found"], false); // false = Do not end the document
+        echo "<div class=\"error\">\n";
+        echo "  <p>" . $l["No cards were found"] . "</p>\n";
+        echo "</div>\n\n";
     } else {
         if ($mysqlfulltext == "yes" || (empty($cardfront) && empty($cardback))) {
             $r = array();
@@ -325,7 +313,9 @@ function search_and_list($card_id, $cardfront, $cardback)
             }
         }
         if (empty($r)) {
-            error($l["No cards were found"], false); // false = Do not end the document
+            echo "<div class=\"error\">\n";
+            echo "  <p>" . $l["No cards were found"] . "</p>\n";
+            echo "</div>\n\n";
         } else {
             echo "<h2>" . $l["Cards found"] . "</h2>\n";
             paragraph($l["cards found, search at bottom of page"]);
@@ -348,18 +338,7 @@ if (set_lesson($lesson)) {
     exit;
 }
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/removecard"
-);
-
-body();
-
+ob_start();
 
 echo "<h1>" . sprintf($l["page title %s"], lesson_user()) . "</h1>\n\n";
 
@@ -368,17 +347,13 @@ if (!empty($card)) {
     switch ($status) {
         case "abort":
             //debug();
-            end_body();
-            end_html();
-            exit;
+            goto end;
             break;
 
         case "no cards":
             paragraph($l["all deleted"]);
             //debug();
-            end_body();
-            end_html();
-            exit;
+            goto end;
             break;
     }
 }
@@ -391,6 +366,20 @@ search_form();
 
 //debug();
 
-end_body();
+end:
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'removecard';
+$url['thislesson'] = './';
+
+$smarty = get_smarty();
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/removecard");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

@@ -657,15 +657,6 @@ function is_admin()
     );
 }
 
-function assert_admin()
-{
-    global $l;
-
-    if (!is_admin()) {
-        error($l["Permission denied"]);
-    }
-}
-
 function sodium_encode($plaintext)
 {
     global $c;
@@ -731,10 +722,10 @@ function load_config()
     $stmt->bind_param("i", $_COOKIE['user_id']);
     $stmt->execute();
     $stmt->store_result()
-        or error(lang("Unable to load config from database."));
+        or error_page(lang("Unable to load config from database."));
 
     if ($stmt->num_rows != 1) {
-        error(lang("Unable to load config from database: numrows = " . $stmt->num_rows));
+        error_page(lang("Unable to load config from database: numrows = " . $stmt->num_rows));
     }
 
     $stmt->bind_result(

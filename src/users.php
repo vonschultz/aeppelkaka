@@ -38,7 +38,10 @@ require_once("backend.php");
 require_once("users_" . $c["lang"] . ".php");
 require_once("index_" . $c["lang"] . ".php");
 
-assert_admin();
+if (!is_admin()) {
+    error_page($l["Permission denied"]);
+    exit;
+}
 
 $smarty = get_smarty();
 

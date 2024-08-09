@@ -25,6 +25,9 @@
 //
 // SPDX-License-Identifier: MIT
 
+$l['m:Card']              = 'Kort';
+$l['m:Remove this card']  = 'Ta bort detta kort';
+
 $l['m:Lesson']            = 'Lektion';
 $l['m:New card']          = 'Nytt kort';
 $l['m:Remove card']       = 'Ta bort ett kort';

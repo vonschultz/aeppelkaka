@@ -51,16 +51,11 @@ function lang($message)
 
 function early_error($message)
 {
-    if (function_exists('error')) {
-        error(lang($message));
-        exit;
-    } else {
-        if (!headers_sent()) {
-            header("Content-type: text/plain; Charset=UTF-8");
-        }
-        echo lang($message);
-        exit;
+    if (!headers_sent()) {
+        header("Content-type: text/plain; Charset=UTF-8");
     }
+    echo lang($message);
+    exit;
 }
 
 //   resource get_db();

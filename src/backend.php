@@ -73,9 +73,6 @@ require_once("early_functions.php");
 //            Creates a new lesson. The function may change the
 //            $lessonfilename, that's why it's passed by reference.
 //
-//   string get_lesson()
-//            Obvious, returns the lesson prevously set.
-//
 //   int read_card_directory()
 //            Reads the card directory and returns the number of found
 //            cards (old, new and short term).
@@ -181,6 +178,9 @@ require_once("early_functions.php");
 //*Other Functions:
 //   int  make_seed()
 //            Makes a number for srand()
+//   array path_join_urls($path, $urls)
+//            Adds the $path prefix to the array of URLs in $urls.
+//            All paths and URLs are assumed to be relative.
 
 function set_lesson($lesson_filename)
 {
@@ -246,18 +246,9 @@ function assert_lesson($lesson_filename)
 {
     global $l;
     if (!set_lesson($lesson_filename)) {
-        error(sprintf($l["No lesson exists!"], $lesson_filename));
+        error_page(sprintf($l["No lesson exists!"], $lesson_filename));
         exit;
     }
-}
-
-function get_lesson()
-{
-    global $b, $l;
-    if (empty($b["lesson"])) {
-        error($l["No lesson exists!"]);
-        exit;
-    } else return $b["lesson"];
 }
 
 // 
@@ -612,7 +603,7 @@ function get_card($card_id)
     $result = $stmt->get_result();
 
     if ($result->num_rows != 1) {
-        error(sprintf($l["Could not find card with ID %s"], $card_id));
+        error_page(sprintf($l["Could not find card with ID %s"], $card_id));
         exit;
     }
 
@@ -749,7 +740,7 @@ function unexpire($card_id)
             break;
         default:
             mailerror("Unknown repetition algorithm: " . $repetition_algorithm);
-            error("Internal server error");
+            error_page("Internal server error");
             break;
     }
 
@@ -1038,4 +1029,21 @@ function make_seed()
     list($usec, $sec) = explode(' ', microtime());
     $floatseed = (float) $sec + ((float) $usec * 100000);
     return (int) $floatseed;
+}
+
+function path_join_urls($path, $urls)
+{
+    $new_urls = array();
+
+    foreach ($urls as $key => $value) {
+        if (is_array($value)) {
+            $new_urls[$key] = path_join_urls($path, $value);
+        } elseif ($value == '.') {
+            $new_urls[$key] = $path . '/';
+        } else {
+            $new_urls[$key] = $path . '/' . $value;
+        }
+    }
+
+    return $new_urls;
 }

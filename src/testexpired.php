@@ -42,20 +42,6 @@ $debug = isset($_REQUEST['debug']) ? $_REQUEST['debug'] : false;
 
 assert_lesson($lesson);
 
-function add_menu_items()
-{
-    global $l;
-    menu_item(
-        lesson_user(),
-        "./",
-        sprintf($l["lesson %s"], lesson_user())
-    );
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function debug()
 {
     global $l, $b, $c, $html, $action;
@@ -85,37 +71,49 @@ function test_expired()
     }
     if ($b["number of expired cards"] != 0) {
         $random_key = array_rand($b["expired cards"]);
-        testform($b["expired cards"][$random_key]->card_id, "testexpired");
+        $card_id = $b["expired cards"][$random_key]->card_id;
+        testform($card_id, "testexpired");
     } else {
         paragraph($l["done"]);
     }
+    return $card_id ?? null;
 }
 
 
 //* void main(void), so to speak
 
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-
-head(
-    sprintf($l["page title %s"], lesson_user()),
-    "/" . urlencode(lesson_filename()) . "/testexpired"
-);
-
-body("testinput");
+ob_start();
 
 read_card_directory();
 
 echo "<h1>" . sprintf($l["test cards in %s"], lesson_user()) . "</h1>\n\n";
 
-test_expired();
+$card_id = test_expired();
 
 if ($debug) {
     debug();
 }
 
-end_body();
+$body = ob_get_clean();
 
-end_html();
+$url = path_join_urls('..', $url);
+$url['this'] = 'learncard';
+$url['thislesson'] = './';
+
+if (!empty($card_id)) {
+    $url['card'] = array(
+        'removecard' => sprintf('removecard/card=%d', $card_id)
+    );
+}
+
+$smarty = get_smarty();
+$smarty->assign('focus_element', 'testinput');
+$smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
+$smarty->assign('relative_url', urlencode(lesson_filename()) . "/testexpired");
+$smarty->assign('lesson_name', lesson_user());
+$smarty->assign('card_id', $card_id);
+$smarty->assign('body', $body);
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

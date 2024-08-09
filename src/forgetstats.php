@@ -42,15 +42,6 @@ $lesson = $_REQUEST['lesson'];
 load_config();
 
 
-function add_menu_items()
-{
-    global $l;
-    menu_item($l["Lessons"], "../", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "../setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "../help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "../logout", $l["Logout of Aeppelkaka"]);
-}
-
 function make_gforg()
 {
     global $g, $b, $debug;
@@ -166,7 +157,7 @@ function make_imvars()
     $g["font"] = 1; // The font system of PHP. Each built-in font has a number.
 
     $g["im"] = @ImageCreate($g["xsize"], $g["ysize"])
-        or error("Cannot Initialize new GD image stream.");
+        or error_page("Cannot Initialize new GD image stream.");
     $g["background"] = ImageColorAllocate($g["im"], 255, 255, 255);
     $g["text"] = ImageColorAllocate($g["im"], 233, 14, 91);
     $g["black"] = ImageColorAllocate($g["im"], 0, 0, 0);
@@ -517,15 +508,7 @@ function debug()
 //* void main(void), so to speak
 
 if ($debug) {
-    begin_html();
-
-    add_menu_items();
-    add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-    head(
-        sprintf($l["page title %s"], lesson_user($lesson)),
-        "/" . urlencode(lesson_filename($lesson)) . "/"
-    );
-    body();
+    ob_start();
 }
 
 assert_lesson($lesson);
@@ -544,8 +527,26 @@ make_imvars();
 if ($debug) {
     draw_days();
     debug();
-    end_body();
-    end_html();
+
+    $body = ob_get_clean();
+
+    $url = path_join_urls('..', $url);
+    $url['this'] = 'forgetstats';
+    $url['thislesson'] = './';
+
+    $smarty = get_smarty();
+    $smarty->assign(
+        'title',
+        sprintf($l["forgetstats debugpage title %s"], lesson_user())
+    );
+    $smarty->assign('relative_url', urlencode(lesson_filename()) . "/");
+    $smarty->assign('lesson_name', lesson_user());
+    $smarty->assign('body', $body);
+
+    $smarty->assign('l', $l);
+    $smarty->assign('url', $url);
+    do_http_headers();
+    $smarty->display('layout.tpl');
 } else {
     make_canvas();
     draw_xaxis();

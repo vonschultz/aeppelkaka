@@ -60,7 +60,7 @@ if (is_logged_in()) {
             $_SERVER['REMOTE_ADDR']
         );
         $stmt->execute()
-            or error("Databasfel: du loggades inte in: " . $db->error());
+            or error_page("Databasfel: du loggades inte in: " . $db->error());
 
         setcookie("user_id", $_REQUEST['hijack']);
         $logged_in = true;
@@ -73,7 +73,7 @@ if (is_logged_in()) {
 expire_sessions();
 
 $logged_in = false;
-$error = "";
+$errors = array();
 
 if (!empty($_POST["username"]) && !empty($_POST["password"])) {
     $db = get_db();
@@ -91,10 +91,10 @@ if (!empty($_POST["username"]) && !empty($_POST["password"])) {
             "It appears the username \"" . $_POST["username"] .
             "\" is not unique."
         );
-        $error .= "There is a problem with your account. Contact the webmaster. ";
+        $errors[] = "There is a problem with your account. Contact the webmaster.";
         $stmt->close();
     } elseif ($stmt->num_rows == 0) {
-        $error .= "Incorrect username or password. ";
+        $errors[] = "Incorrect username or password.";
         $stmt->close();
     } else {
         $stmt->bind_result($user_id, $password_hash, $password_inner_hash_algo);
@@ -117,7 +117,7 @@ if (!empty($_POST["username"]) && !empty($_POST["password"])) {
                 "\" is using a weird inner hash algorithm: " .
                 "$password_inner_hash_algo."
             );
-            $error .= "There is a problem with your account. Contact the webmaster. ";
+            $errors[] = "There is a problem with your account. Contact the webmaster.";
             $password = false;
         }
         if (!empty($password) && password_verify($password, sodium_decode($password_hash))) {
@@ -144,13 +144,13 @@ if (!empty($_POST["username"]) && !empty($_POST["password"])) {
                 $_SERVER['REMOTE_ADDR']
             );
             $ins_stmt->execute()
-                or $error .= "Database trouble: Login failed. ";
+                or $errors[] = "Database trouble: Login failed.";
 
             setcookie("user_id", $user_id);
             $logged_in = true;
         } else {
             // User not OK.
-            $error .= "Incorrect username or password. ";
+            $errors[] = "Incorrect username or password.";
         }
     }
 }
@@ -160,24 +160,19 @@ if (($logged_in || is_logged_in()) && !headers_sent()) {
     exit;
 }
 
-
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "Main style");
-
-begin_html();
-
-head("Aeppelkaka: Log in", ".");
-
-echo "<body>\n";
-$html["has_body"] = true;
-
+ob_start();
 ?>
 
 <h2>Log in</h2>
 
 <?php
 
-if (!empty($error)) {
-    error($error, false);
+if (!empty($errors)) {
+    echo "<div class=\"error\">\n";
+    foreach ($errors as $error) {
+        echo "  <p>" . $error . "</p>\n";
+    }
+    echo "</div>\n\n";
 }
 
 begin_form("login.php");
@@ -186,7 +181,7 @@ begin_form("login.php");
 <table align="center">
   <tr>
     <td>Username:</td>
-    <td><input type="text" name="username" /></td>
+    <td><input type="text" name="username" id="username" /></td>
   </tr>
   <tr>
     <td>Password:</td>
@@ -200,6 +195,16 @@ begin_form("login.php");
 <?php
 end_form();
 
-echo "</body>\n";
+$body = ob_get_clean();
 
-end_html();
+$url['this'] = 'login';
+
+$smarty = get_smarty();
+$smarty->assign('focus_element', 'username');
+$smarty->assign('title', "Aeppelkaka: Log in");
+$smarty->assign('relative_url', '.');
+$smarty->assign('body', $body);
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');

@@ -34,16 +34,21 @@
 style="width: 100%; font-family: monospace; font-size: smaller"/>
 </p>
 {/if}
-{/function}
+{/function}{* print_card *}
+{assign var='title' value=$title|default:'Aeppelkaka'}
+{assign var='relative_url' value=$relative_url|default:''}
+{assign var='focus_element' value=$focus_element|default:''}
+{assign var='body' value=$body|default:''}
 <!DOCTYPE html>
 <html lang="{$lang|default:'en'}">
 
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, height=device-height, user-scalable=no, initial-scale=1, target-densitydpi=device-dpi, maximum-scale=1.0" />
-  <base href="{$webdir}/"/>
+  <base href="{$webdir}/{$relative_url|escape}"/>
   <link href="{$webdir}/{$manifest['main.css']}" rel="stylesheet" type="text/css"/>
-  <title>{block name=title}Aeppelkaka{/block}</title>
+  <script type="text/javascript" src="{$webdir}/{$manifest['main.js']}"></script>
+  <title>{block name=title}{$title}{/block}</title>
   {block name=head}{/block}
   
   <!-- We use Yahoo YUI 2 menu bar. -->
@@ -78,18 +83,32 @@ style="width: 100%; font-family: monospace; font-size: smaller"/>
   <script type="text/javascript">
 //<![CDATA[
 
-{function mitem enabled=1}
+{function mitem enabled=1 indent=10}{capture name="mitem"}
 {ldelim}
-text: "{$thetext|escape:'javascript'}",
+  text: "{$thetext|escape:'javascript'}",
 {if $url.this == $theurl || !$enabled}
-disabled: true
+  disabled: true
 {else}
-url: "{$theurl|escape:'javascript'}"
+  url: "{$theurl|escape:'javascript'}"
 {/if}
-{rdelim}
-{/function}
+{rdelim}{/capture}
+{$smarty.capture.mitem|indent:$indent nofilter}{/function}
 
 var theItemData = [
+{if !empty($card_id)}
+  {ldelim}
+    text: "{$l['m:Card']|escape:'javascript'}",
+    submenu:
+    {ldelim}
+      id: "cardmenu",
+      itemdata: [
+{call mitem thetext=$l['m:Remove this card']
+            theurl=$url.card.removecard
+            indent=8}
+      ]
+    {rdelim}
+  {rdelim},
+{/if}
 {if !empty($lesson_id)}
   {ldelim}
     text: "{$l['m:Lesson']|escape:'javascript'}",
@@ -136,7 +155,8 @@ var theItemData = [
               itemdata: [
 {call mitem thetext=$l['m:List cardbacks']
             theurl=$url.lesson.listcardbacks
-            enabled=$cardsexist}
+            enabled=$cardsexist
+            indent=16}
               ]
             {rdelim}
           {rdelim}
@@ -145,6 +165,7 @@ var theItemData = [
     {rdelim}
   {rdelim},
 {/if}
+{if !empty($l['m:System'])}
   {ldelim}
     text: "{$l['m:System']|escape:'javascript'}",
     submenu:
@@ -161,17 +182,19 @@ var theItemData = [
       ]
     {rdelim}
   {rdelim},
-
+{/if}
+{if !empty($l['m:Help'])}
   {ldelim}
     text: "{$l['m:Help']|escape:'javascript'}",
     submenu:
     {ldelim}
       id: "helpmenu",
       itemdata: [
-{call mitem thetext=$l['m:Manual']     theurl=$url.help},
+{call mitem thetext=$l['m:Manual']     theurl=$url.help  indent=8},
       ]
     {rdelim}
   {rdelim}
+{/if}
 ];
 
 YAHOO.util.Event.onDOMReady(function () {ldelim}
@@ -180,13 +203,19 @@ YAHOO.util.Event.onDOMReady(function () {ldelim}
      constructor is the id of the element to be created; the 
      second is an object literal of configuration properties.
   */
-
-  var theMenuBar = new YAHOO.widget.MenuBar("aemenubar", {ldelim}
-                                            lazyload: true, 
-                                            itemdata: theItemData 
-                                          {rdelim});
-
-  theMenuBar.render(document.body);
+  if (theItemData.length > 0) {ldelim}
+    var theMenuBar = new YAHOO.widget.MenuBar(
+      "aemenubar",
+      {ldelim}
+        lazyload: true,
+        itemdata: theItemData
+      {rdelim}
+    );
+    theMenuBar.render(document.body);
+  {rdelim}
+{if $focus_element}
+  document.getElementById("{$focus_element|escape}").focus();
+{/if}
 {rdelim});
 
 //]]>
@@ -208,7 +237,16 @@ YAHOO.util.Event.onDOMReady(function () {ldelim}
 </td>
 {/strip}{/function}
 
+{if !empty($l['Logout'])}
 <table id="menu">
+{if $lesson_name}
+  <tr class="menuline">
+    {call menuitem
+          theurl=$url.thislesson
+          thetitle=$l['lesson %s']|sprintf:$lesson_name
+          thetext=$lesson_name}
+  </tr>
+{/if}
   <tr class="menuline">
     {call menuitem
           theurl=$url.listoflessons
@@ -242,8 +280,9 @@ YAHOO.util.Event.onDOMReady(function () {ldelim}
   </tr>
 {/if}
 </table>
+{/if}
 
-{block name=body}{/block}
+{block name=body}{$body nofilter}{/block}
 
 </div>
 

@@ -48,34 +48,33 @@ $old_password = isset($_POST['old_password']) ? $_POST['old_password'] : null;
 $password = isset($_POST['password']) ? $_POST['password'] : null;
 $password2 = isset($_POST['password2']) ? $_POST['password2'] : null;
 
+$errors = array();
+
 function setup_form_page()
 {
-    global $l, $c, $html, $error, $message;
+    global $l, $c, $html, $errors, $message, $url;
 
-    if (!$html["has_begun"]) {
-        begin_html();
-        add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-        menu_item($l["Lessons"], "./", $l["Main page with lessons"]);
-        menu_item($l["Help"], "help", $l["The Aeppelkaka manual"]);
-        menu_item($l["Logout"], "logout", $l["Logout of Aeppelkaka"]);
-        head($l["Setup"], "setup.php");
-        body();
-    }
+    ob_start();
+
     echo "<h1>" . $l["Setup"] . "</h1>\n";
 
     if (!empty($message)) {
         paragraph($message);
     }
 
+    if (!empty($errors)) {
+        echo "<div class=\"error\">\n";
+        foreach ($errors as $error) {
+            echo "  <p>" . $error . "</p>\n";
+        }
+        echo "</div>\n\n";
+    }
+
     if (!empty($_POST['lang']) || !empty($_POST['username'])) {
         paragraph($l["This was saved:"]);
     }
 
-    if (!empty($error)) {
-        error($error, false);
-    }
-
-    begin_form("setup.php");
+    begin_form("setup");
     echo "<table class=\"inset cyan\">\n";
     echo "  <tr>\n";
     echo "    <td>" . $l["Username"] . "</td>\n";
@@ -194,13 +193,24 @@ function setup_form_page()
     echo "  </tr>\n</table>\n";
     end_form();
 
-    end_body();
-    end_html();
+    $body = ob_get_clean();
+
+    $url['this'] = 'setup';
+
+    $smarty = get_smarty();
+    $smarty->assign('title', $l["Setup"]);
+    $smarty->assign('relative_url', 'setup');
+    $smarty->assign('body', $body);
+
+    $smarty->assign('l', $l);
+    $smarty->assign('url', $url);
+    do_http_headers();
+    $smarty->display('layout.tpl');
 }
 
 if (!empty($username)) {
     if (!username_unique($username) && $username != $c["name"]) {
-        $error = sprintf($l["Username %s not unique"], $username);
+        $errors[] = sprintf($l["Username %s not unique"], $username);
     } elseif ($username != $c["name"]) {
         $db = get_db();
         $stmt = $db->prepare(
@@ -213,20 +223,20 @@ if (!empty($username)) {
     }
 } elseif (!empty($lang)) {
     if (!array_key_exists($lang, $c["languages"])) {
-        error($l["Impossible error: wrong language selected"], false);
+        $errors[] = $l["Impossible error: wrong language selected"];
         $lang = $c["lang"];
     }
     $c["lang"] = $lang;
 
     if (!in_array($tz, $c["timezones"])) {
-        error($l["Impossible error: wrong timezone selected"], false);
+        $errors[] = $l["Impossible error: wrong timezone selected"];
     }
     $c["timezone"] = $tz;
 
     $c["prefers"] = $prefers;
 
     if (preg_match("/.*[^0-9].*/", $diaheight)) {
-        error($l["Only digits in diaheight"], false);
+        $errors[] = $l["Only digits in diaheight"];
         $diaheight = $c["diagram height"];
     }
 
@@ -241,9 +251,9 @@ if (!empty($username)) {
     require_once("setup_" . $c["lang"] . ".php");
 } elseif (!empty($old_password)) {
     if (empty($password)) {
-        $error = $l["Empty passwords won't do."];
+        $errors[] = $l["Empty passwords won't do."];
     } elseif ($password != $password2) {
-        $error = $l["Passwords don't match"];
+        $errors[] = $l["Passwords don't match"];
     } else {
         $db = get_db();
         $stmt = $db->prepare(
@@ -266,7 +276,7 @@ if (!empty($username)) {
         }
 
         if (!password_verify($old_password, $password_hash)) {
-            $error = $l["Old password incorrect"];
+            $errors[] = $l["Old password incorrect"];
         } else {
             $stmt = $db->prepare(
                 "UPDATE users " .

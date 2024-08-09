@@ -35,51 +35,52 @@ load_config();
 require_once("backend.php");
 require_once("html.php");
 require_once("newlesson_" . $c["lang"] . ".php");
-$newlesson = $_POST['newlesson'];
+$newlesson = $_POST['newlesson'] ?? null;
 
 function assert_lesson_not_empty($lesson)
 {
     global $l;
     if (empty($lesson)) {
-        error($l["Lesson empty"]);
+        error_page($l["Lesson empty"], relative_url: 'newlesson');
         exit;
     }
 }
 
-function add_menu_items()
-{
-    global $l;
-    menu_item($l["Lessons"], "./", $l["Main page with lessons"]);
-    menu_item($l["Setup"], "setup", $l["Aeppelkaka settings"]);
-    menu_item($l["Help"], "help", $l["The Aeppelkaka manual"]);
-    menu_item($l["Logout"], "logout", $l["Logout of Aeppelkaka"]);
-}
-
 //* void main(void), so to speak
-
-begin_html();
-
-add_menu_items();
-add_stylesheet($c["webdir"] . "/" . $c["manifest"]["main.css"], "");
-head($l["page title"], "newlesson");
 
 assert_lesson_not_empty($newlesson);
 $lesson_filename = lessonuser2lessonfilename($newlesson);
 
-body();
-
-if (new_lesson($newlesson, $lesson_filename)) {
-    echo "<h1>" . $l["success"] . "</h1>\n";
-    paragraph(sprintf(
-        $l["lesson %s created"],
-        (
-            "<a href=\"" .
-            nice_url($c["webdir"] . "/" . urlencode($lesson_filename)) .
-            "\">" . htmlspecialchars($newlesson) . "</a>"
-        )
-    ));
-    end_body();
-    end_html();
-} else {
-    error(sprintf($l["failure lesson %s"], $newlesson));
+if (!new_lesson($newlesson, $lesson_filename)) {
+    error_page(
+        sprintf($l["failure lesson %s"], $newlesson),
+        relative_url: 'newlesson'
+    );
+    exit;
 }
+
+ob_start();
+
+echo "<h1>" . $l["success"] . "</h1>\n";
+paragraph(sprintf(
+    $l["lesson %s created"],
+    (
+        "<a href=\"" .
+        nice_url($c["webdir"] . "/" . urlencode($lesson_filename)) .
+        "\">" . htmlspecialchars($newlesson) . "</a>"
+    )
+));
+
+$body = ob_get_clean();
+
+$url['this'] = 'newlesson';
+
+$smarty = get_smarty();
+$smarty->assign('title', $l["page title"]);
+$smarty->assign('relative_url', 'newlesson');
+$smarty->assign('body', $body);
+
+$smarty->assign('l', $l);
+$smarty->assign('url', $url);
+do_http_headers();
+$smarty->display('layout.tpl');
