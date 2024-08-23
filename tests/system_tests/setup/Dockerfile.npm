@@ -1,0 +1,6 @@
+FROM node:22
+
+RUN apt-get update && \
+    apt-get install --assume-yes gettext-base && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*

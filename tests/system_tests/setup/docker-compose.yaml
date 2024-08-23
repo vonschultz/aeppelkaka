@@ -1,0 +1,124 @@
+#  Aeppelkaka, a program which can help a stundent learning facts.
+#  Copyright (C) 2024 Christian von Schultz
+#
+#  Permission is hereby granted, free of charge, to any person
+#  obtaining a copy of this software and associated documentation
+#  files (the “Software”), to deal in the Software without
+#  restriction, including without limitation the rights to use, copy,
+#  modify, merge, publish, distribute, sublicense, and/or sell copies
+#  of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be
+#  included in all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+#  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+#  BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+#  ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+#  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#  SOFTWARE.
+#
+# SPDX-License-Identifier: MIT
+---
+
+name: aeppelkaka
+services:
+  apache:
+    build:
+      dockerfile: tests/system_tests/setup/Dockerfile.php-apache-mysqli
+    ports:
+      - target: "80"
+        host_ip: "127.0.0.1"
+        published: "8080"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: dist
+        target: /var/www/html/aeppelkaka
+      - type: volume
+        source: vendor
+        target: /var/www/vendor
+  composer:
+    command: update
+    image: composer/composer
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+      - type: volume
+        source: vendor
+        target: /app/vendor
+  create_secrets:
+    image: php:8.3
+    command: php /app/tests/system_tests/setup/create_secrets.php
+    volumes:
+      - type: bind
+        source: .
+        target: /app
+        read_only: true
+      - type: volume
+        source: secrets
+        target: /secrets
+  mysql:
+    depends_on:
+      create_secrets:
+        condition: service_completed_successfully
+    environment:
+      MYSQL_DATABASE: aepplekaka
+      MYSQL_PASSWORD_FILE: /secrets/mysql_password
+      MYSQL_ROOT_PASSWORD_FILE: /secrets/mysql_root_password
+      MYSQL_USER: aepplekaka
+    image: mysql
+    volumes:
+      - type: bind
+        source: tests/system_tests/setup/create_tables.sql
+        target: /docker-entrypoint-initdb.d/create_tables.sql
+        read_only: true
+      - type: volume
+        source: secrets
+        target: /docker-entrypoint-initdb.d/insert_users.sql
+        read_only: true
+        volume:
+          subpath: insert_users.sql
+      - type: volume
+        source: secrets
+        target: /secrets
+  npm:
+    build:
+      dockerfile: tests/system_tests/setup/Dockerfile.npm
+    command: >
+      bash tests/system_tests/setup/npm_start.sh
+    depends_on:
+      create_secrets:
+        condition: service_completed_successfully
+    environment:
+      AEPPELKAKA_MAIL: aeppelkaka@localhost
+      MYSQL_DATABASE_NAME: aepplekaka
+      MYSQL_HOST: mysql
+      MYSQL_USER: aepplekaka
+      WEBMASTER_MAIL: webmaster@localhost
+      URL_SCHEME: http
+      URL_AUTHORITY: localhost:8080
+    working_dir: /home/node/app
+    volumes:
+      - type: bind
+        source: .
+        target: /home/node/app
+      - type: volume
+        source: dist
+        target: /home/node/app/dist
+      - type: volume
+        source: node_modules
+        target: /home/node/app/node_modules
+      - type: volume
+        source: secrets
+        target: /secrets
+volumes:
+  dist:
+  node_modules:
+  secrets:
+  vendor:
+...

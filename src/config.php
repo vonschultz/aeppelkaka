@@ -39,8 +39,8 @@ use Smarty\Smarty;
 $c["default language"] = "sv";
 
 // Edit the next lines when deploying:
-$c["webdir"] = "https://${PUBLIC_HOSTNAME}/aeppelkaka";
-$c["yuidir"] = "https://${PUBLIC_HOSTNAME}/yui";  // Tested with YUI 2.9.0
+$c["webdir"] = "${URL_SCHEME}://${URL_AUTHORITY}/aeppelkaka";
+$c["yuidir"] = "${URL_SCHEME}://${URL_AUTHORITY}/yui";  // Tested with YUI 2.9.0
 
 // The address that gets diagnostic messages from the system:
 // Edit the next line when deploying:
