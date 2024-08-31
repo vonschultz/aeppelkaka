@@ -32,7 +32,7 @@ const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
 
 module.exports = {
   mode: 'development',
-  devtool: false,
+  devtool: 'source-map',
   entry: './src/index.js',
   output: {
     filename: '[name]-[contenthash].js',
