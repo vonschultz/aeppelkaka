@@ -47,68 +47,84 @@ function togglemenu () {
   }
 }
 
-export function aeppelchess_run () {
-  if (document.getElementById('menu').textContent.match(/Chess/i)) {
-    $testinput = $('#testinput')
-    $cardfront = $('.cardfront')
-    $cardback = $('#cardback')
+function aeppelchess_run_card (cardId) {
+  $testinput = $('#testinput_' + cardId)
+  $cardfront = $('#cardfront_' + cardId)
+  $cardback = $('#cardback_' + cardId)
 
-    $testinput.blur()
+  const chesspgnedit = 'card_' + cardId + '_chesspgnedit'
+  const chesspgnview = 'card_' + cardId + '_chesspgnview'
 
-    $('h1').click(togglemenu)
-    if (isMobile()) {
-      const menu = document.getElementById('menu')
-      menu.style.display = 'none'
-    }
+  $testinput.blur()
 
-    $cardfront.append('<div id="chesspgnedit" style="width: 300px"></div>')
-    const pgnconfig = {
-      showCoords: false,
-      theme: 'brown',
-      pieceStyle: 'wikipedia',
-      showFen: false
-    }
-    const pgnedit = pgnEdit('chesspgnedit', {...pgnconfig, timerTime: 1400})
-    $cardback.append('<div id="chesspgnview" style="width: 300px"></div>')
-    pgnconfig.pgn = $cardback.text()
-    const pgnview = pgnView('chesspgnview', pgnconfig)
-    // Base the regex on the pgnview, but allow extra spaces around
-    // comments, as the pgnedit widget likes to add that. Also allow
-    // spaces and an extra * at the end, which might not be present
-    // in the pgnview, but will be added by pgnedit.
-    document.getElementById('regex').value = (
-      '^' +
+  $('h1').click(togglemenu)
+  if (isMobile()) {
+    const menu = document.getElementById('menu')
+    menu.style.display = 'none'
+  }
+
+  $cardfront.append(
+    '<div id="' + chesspgnedit + '" style="width: 300px"></div>'
+  )
+  const pgnconfig = {
+    showCoords: false,
+    theme: 'brown',
+    pieceStyle: 'wikipedia',
+    showFen: false
+  }
+  const pgnedit = pgnEdit(chesspgnedit, { ...pgnconfig, timerTime: 1400 })
+  $cardback.append('<div id="' + chesspgnview + '" style="width: 300px"></div>')
+  pgnconfig.pgn = $cardback.text()
+  const pgnview = pgnView(chesspgnview, pgnconfig)
+
+  // Base the regex on the pgnview, but allow extra spaces around
+  // comments, as the pgnedit widget likes to add that. Also allow
+  // spaces and an extra * at the end, which might not be present
+  // in the pgnview, but will be added by pgnedit.
+  document.getElementById('regex').value = (
+    '^' +
       _.escapeRegExp(
         pgnview.base.getPgn().writePgn()
       ).replace(/\\[}{]/g, '\\s*$&\\s*') +
       '\\s*\\*?\\s*$')
 
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        $testinput.val(pgnedit.base.getPgn().writePgn())
-        $testinput.blur()
-        const madeMoves = pgnedit.base.getPgn().getMoves()
-        const allMoves = pgnview.base.getPgn().getMoves()
-        const nextMove = allMoves[madeMoves.length]
-        if (nextMove && nextMove.commentAfter === 'given') {
-          pgnedit.base.onSnapEnd(nextMove.from, nextMove.to)
-          pgnedit.board.set({ fen: pgnedit.base.chess.fen() })
-          $('#chesspgneditButtonprev').click()
-          $('#chesspgneditButtonnext').click()
-          document.querySelector('#commentchesspgneditButton input.afterComment').click()
-          document.querySelector('#commentchesspgneditButton textarea').value = 'given'
-          document.querySelector('#commentchesspgneditButton textarea').dispatchEvent(
-            new Event('change'))
-        }
-      })
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      $testinput.val(pgnedit.base.getPgn().writePgn())
+      $testinput.blur()
+      const madeMoves = pgnedit.base.getPgn().getMoves()
+      const allMoves = pgnview.base.getPgn().getMoves()
+      const nextMove = allMoves[madeMoves.length]
+      if (nextMove && nextMove.commentAfter === 'given') {
+        pgnedit.base.onSnapEnd(nextMove.from, nextMove.to)
+        pgnedit.board.set({ fen: pgnedit.base.chess.fen() })
+        $('#' + chesspgnedit + 'Buttonprev').click()
+        $('#' + chesspgnedit + 'Buttonnext').click()
+        document.querySelector('#comment' + chesspgnedit + 'Button input.afterComment').click()
+        document.querySelector('#comment' + chesspgnedit + 'Button textarea').value = 'given'
+        document.querySelector('#comment' + chesspgnedit + 'Button textarea').dispatchEvent(
+          new Event('change'))
+      }
     })
+  })
 
-    observer.observe(document.getElementById('chesspgneditMoves'), {
-      characterDataOldValue: true,
-      subtree: true,
-      childList: true,
-      characterData: true
-    })
+  observer.observe(document.getElementById(chesspgnedit + 'Moves'), {
+    characterDataOldValue: true,
+    subtree: true,
+    childList: true,
+    characterData: true
+  })
+}
+
+export function aeppelchess_run () {
+  if (document.getElementById('menu').textContent.match(/Chess/i)) {
+    for (const element of document.querySelectorAll('.cardback')) {
+      try {
+        aeppelchess_run_card(element.id.replace('cardback_', ''))
+      } catch (error) {
+        console.error(error)
+      }
+    }
   } else {
     console.log('Chess content disabled on this page.')
   }

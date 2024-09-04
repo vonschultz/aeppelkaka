@@ -30,10 +30,11 @@ $l["Front"] = "Framsidan: ";
 $l["Back"] = "Baksidan:";
 
 // The testform things (valid XHTML again, please)
-$l["test if you know"] = (
+$l["test if you know card %d"] = (
     "Försök komma ihåg vad som står på kortets andra sida. " .
     "När du tror du vet vad som stod där, tar du en titt " .
-    "på <a tabindex=\"1\" href=\"javascript:showCardback();\">baksidan</a>."
+    "på <a tabindex=\"1\" href=\"javascript:showCardback(%1\$d);\" " .
+    "id=\"show_card_%1\$d\">baksidan</a>."
 );
 //// %s is $l["yes"] and $l["no"]
 //$l["did you know? %s or %s"] = ("Kunde du komma ihåg baksidan? %s eller %s.");

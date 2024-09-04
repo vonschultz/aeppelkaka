@@ -76,7 +76,7 @@ function learnform($card)
     ));
 
     list($cardfront, $cardback) = get_card($card->card_id);
-    print_card($cardfront, $cardback);
+    print_card($card->card_id, $cardfront, $cardback);
     echo "</div>\n";
 
     begin_form("learncard");
@@ -217,7 +217,7 @@ if (!empty($card_id)) {
 
 $smarty = get_smarty();
 if ($action === "short-term2long-term") {
-    $smarty->assign('focus_element', 'testinput');
+    $smarty->assign('focus_element', sprintf('testinput_%d', $card_id));
 }
 $smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/learncard");

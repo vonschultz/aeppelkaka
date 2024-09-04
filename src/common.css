@@ -83,7 +83,7 @@ a { text-decoration: underline;
         color: blue;
         cursor: pointer; } */
 
-div.error:not(#chesspgnviewError):not(#chesspgneditError) { margin: 1cm;
+div.error:not(div.pgnvjs div.error) { margin: 1cm;
             padding: 1cm;
             border: inset red; 
             background: rgb(255, 225, 225);

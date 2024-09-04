@@ -25,12 +25,12 @@
  *}
 {function print_card backvisible=1}
 <p class="cardfronttitle">{$l['Front']}</p>
-<div class="cardfront"><p>{$cardfront nofilter}</p></div>
+<div class="cardfront" id="cardfront_{$card_id}"><p>{$cardfront nofilter}</p></div>
 <p class="cardbacktitle">{$l['Back']}</p>
-<div class="cardback{if !$backvisible} black{/if}">
+<div id="cardback_{$card_id}" class="cardback{if !$backvisible} black{/if}">
 <p>{$cardback nofilter}</p></div>
 {if !$backvisible}
-<p><input id="testinput{$card_id}" type="text"
+<p><input id="testinput_{$card_id}" type="text"
 style="width: 100%; font-family: monospace; font-size: smaller"/>
 </p>
 {/if}

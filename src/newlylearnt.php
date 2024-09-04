@@ -130,7 +130,7 @@ if (!empty($card_id)) {
 }
 
 $smarty = get_smarty();
-$smarty->assign('focus_element', 'testinput');
+$smarty->assign('focus_element', sprintf('testinput_%d', $card_id));
 $smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/newlylearnt");
 $smarty->assign('lesson_name', lesson_user());

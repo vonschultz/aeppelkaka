@@ -103,25 +103,30 @@ function error_page($message, $relative_url = '.')
     exit;
 }
 
-function print_card($cardfront, $cardback, $backvisible = true)
+function print_card($card_id, $cardfront, $cardback, $backvisible = true)
 {
     global $l;
     echo "<p class=\"cardfronttitle\">" . $l["Front"] . "</p>\n";
-    echo "<div class=\"cardfront\"><p>" . $cardfront . "</p></div>\n";
+    printf(
+        "<div class=\"cardfront\" id=\"cardfront_%d\"><p>%s</p></div>\n",
+        $card_id,
+        $cardfront
+    );
     echo "<p class=\"cardbacktitle\">" . $l["Back"] . "</p>\n";
 
     if ($backvisible) {
-        echo "<div id=\"cardback\" class=\"cardback\"><p>";
+        printf("<div id=\"cardback_%d\" class=\"cardback\"><p>", $card_id);
     } else {
-        echo "<div id=\"cardback\" class=\"cardback black\"><p>";
+        printf("<div id=\"cardback_%d\" class=\"cardback black\"><p>", $card_id);
     }
 
     echo  $cardback . "</p></div>\n";
 
     if (!$backvisible) {
-        $inputs = (
-            '<input autocomplete="off" id="testinput" type="text" ' .
-            'style="width: 100%; font-family: monospace; font-size: smaller"/>'
+        $inputs = sprintf(
+            '<input autocomplete="off" id="testinput_%d" type="text" ' .
+            'style="width: 100%%; font-family: monospace; font-size: smaller"/>',
+            $card_id
         );
         printf("<p>%s</p>\n", $inputs);
     }
@@ -157,10 +162,10 @@ function testform($card_id, $target, $hiddens = array())
 {
     global $l, $c;
 
-    paragraph($l["test if you know"]);
+    paragraph(sprintf($l["test if you know card %d"], $card_id));
 
     list($cardfront, $cardback) = get_card($card_id);
-    print_card($cardfront, $cardback, false); // back visible = false
+    print_card($card_id, $cardfront, $cardback, false); // back visible = false
 
     begin_form($target);
     hidden("card", $card_id);

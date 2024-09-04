@@ -72,7 +72,7 @@ function show_card($card_id)
     echo "<h3>" . sprintf($l["Card ID %s"], $card_id) . "</h3>\n\n";
 
     list($cardfront, $cardback) = get_card($card_id);
-    print_card($cardfront, $cardback);
+    print_card($card_id, $cardfront, $cardback);
 
     echo "<p>";
     hidden("card", $card_id);
@@ -91,7 +91,7 @@ function confirm_remove($card_id)
     paragraph(sprintf($l["really remove %s?"], $card_id));
 
     list($cardfront, $cardback) = get_card($card_id);
-    print_card($cardfront, $cardback);
+    print_card($card_id, $cardfront, $cardback);
 
     echo "<p>";
     hidden("card", $card_id);

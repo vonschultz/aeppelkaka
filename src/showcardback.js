@@ -23,14 +23,15 @@
  *
  * SPDX-License-Identifier: MIT
  */
-export function showCardback () {
-  document.getElementById('cardback').style.setProperty('display', 'block', null)
+export function showCardback (cardId) {
+  document.getElementById('cardback_' + cardId)
+    .style.setProperty('display', 'block', null)
 
   if (document.getElementById('question')) {
     document.getElementById('question').style.setProperty('display', 'block', null)
   } else {
-    if (document.getElementById('testinput')) {
-      const input = new String(document.getElementById('testinput').value)
+    if (document.getElementById('testinput_' + cardId)) {
+      const input = new String(document.getElementById('testinput_' + cardId).value)
       const regex = new String(document.getElementById('regex').value)
 
       if (input.match(regex)) {
@@ -49,5 +50,5 @@ export function showCardback () {
     }
   }
 
-  document.getElementById('cardback').scrollIntoView()
+  document.getElementById('cardback_' + cardId).scrollIntoView()
 }
