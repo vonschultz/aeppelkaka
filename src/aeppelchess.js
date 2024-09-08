@@ -47,7 +47,59 @@ function togglemenu () {
   }
 }
 
-function aeppelchess_run_card (cardId) {
+function nagsEqual (nag1, nag2) {
+  return (
+    nag1 == nag2 || // eslint-disable-line eqeqeq
+    (!!nag1 && !!nag2 && nag1.toString() === nag2.toString())
+  )
+}
+
+function compareFrontAndBack (cardId, pgnview, pgnedit) {
+  const chesspgnedit = 'card_' + cardId + '_chesspgnedit'
+  const chesspgnview = 'card_' + cardId + '_chesspgnview'
+  const backsideMoves = pgnview.base.getPgn().getMoves()
+  const frontsideMoves = pgnedit.base.getPgn().getMoves()
+  const wrongPiece = '1px solid red'
+  const wrongSquare = '1px solid orange'
+  const wrongNag = '1px solid brown'
+  const correct = '0px solid white'
+  for (
+    let i = 0, j = 0;
+    i < backsideMoves.length && j < frontsideMoves.length;
+    i++, j++
+  ) {
+    const viewmove = document.getElementById(chesspgnview + 'Moves' + i)
+    while (!frontsideMoves[j] && j < frontsideMoves.length) {
+      j++
+    }
+    if (j === frontsideMoves.length) {
+      break
+    }
+    if (backsideMoves[i].from !== frontsideMoves[j].from) {
+      viewmove.style.outline = wrongPiece
+      if (viewmove.checkVisibility()) {
+        document.getElementById(chesspgnedit + 'Moves' + j).style.outline = wrongPiece
+      }
+    } else if (backsideMoves[i].to !== frontsideMoves[j].to) {
+      viewmove.style.outline = wrongSquare
+      if (viewmove.checkVisibility()) {
+        document.getElementById(chesspgnedit + 'Moves' + j).style.outline = wrongSquare
+      }
+    } else if (!nagsEqual(backsideMoves[i].nag, frontsideMoves[j].nag)) {
+      viewmove.style.outline = wrongNag
+      if (viewmove.checkVisibility()) {
+        document.getElementById(chesspgnedit + 'Moves' + j).style.outline = wrongNag
+      }
+    } else {
+      viewmove.style.outline = correct
+      if (viewmove.checkVisibility()) {
+        document.getElementById(chesspgnedit + 'Moves' + j).style.outline = correct
+      }
+    }
+  }
+}
+
+function aeppelchessRunCard (cardId) {
   $testinput = $('#testinput_' + cardId)
   $cardfront = $('#cardfront_' + cardId)
   $cardback = $('#cardback_' + cardId)
@@ -81,17 +133,24 @@ function aeppelchess_run_card (cardId) {
   // comments, as the pgnedit widget likes to add that. Also allow
   // spaces and an extra * at the end, which might not be present
   // in the pgnview, but will be added by pgnedit.
-  document.getElementById('regex').value = (
-    '^' +
+  if (document.getElementById('regex')) {
+    document.getElementById('regex').value = (
+      '^' +
       _.escapeRegExp(
         pgnview.base.getPgn().writePgn()
       ).replace(/\\[}{]/g, '\\s*$&\\s*') +
-      '\\s*\\*?\\s*$')
+            '\\s*\\*?\\s*$')
+  }
+
+  $('#cardback_' + cardId).on('showCardback', () => {
+    compareFrontAndBack(cardId, pgnview, pgnedit)
+  })
 
   const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
       $testinput.val(pgnedit.base.getPgn().writePgn())
       $testinput.blur()
+      compareFrontAndBack(cardId, pgnview, pgnedit)
       const madeMoves = pgnedit.base.getPgn().getMoves()
       const allMoves = pgnview.base.getPgn().getMoves()
       const nextMove = allMoves[madeMoves.length]
@@ -116,11 +175,11 @@ function aeppelchess_run_card (cardId) {
   })
 }
 
-export function aeppelchess_run () {
+export function aeppelchessRun () {
   if (document.getElementById('menu').textContent.match(/Chess/i)) {
     for (const element of document.querySelectorAll('.cardback')) {
       try {
-        aeppelchess_run_card(element.id.replace('cardback_', ''))
+        aeppelchessRunCard(element.id.replace('cardback_', ''))
       } catch (error) {
         console.error(error)
       }

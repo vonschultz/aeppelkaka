@@ -26,13 +26,13 @@
 import './common.css'
 
 import $ from 'jquery'
-import { aeppelchess_run } from './aeppelchess.js'
+import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
 import { updateCountdown } from './countdown.js'
 
 window.showCardback = showCardback
 window.updateCountdown = updateCountdown
 
-$(aeppelchess_run)
+$(aeppelchessRun)
 
 console.log('This is Aeppelkaka!')

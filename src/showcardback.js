@@ -51,4 +51,7 @@ export function showCardback (cardId) {
   }
 
   document.getElementById('cardback_' + cardId).scrollIntoView()
+  document.getElementById('cardback_' + cardId).dispatchEvent(
+    new Event('showCardback')
+  )
 }
