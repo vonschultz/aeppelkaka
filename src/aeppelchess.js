@@ -48,10 +48,13 @@ function togglemenu () {
 }
 
 function nagsEqual (nag1, nag2) {
-  return (
-    nag1 == nag2 || // eslint-disable-line eqeqeq
-    (!!nag1 && !!nag2 && nag1.toString() === nag2.toString())
-  )
+  if (nag1 === null || nag1 === undefined) {
+    nag1 = []
+  }
+  if (nag2 === null || nag2 == undefined) {
+    nag2 = []
+  }
+  return _.isEqual(nag1, nag2)
 }
 
 function compareFrontAndBack (cardId, pgnview, pgnedit) {
