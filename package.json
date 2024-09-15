@@ -10,7 +10,8 @@
   },
   "standard": {
     "globals": [
-      "Event"
+      "Event",
+      "SpeechSynthesisUtterance"
     ]
   },
   "author": "Christian von Schultz",
