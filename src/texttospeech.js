@@ -23,9 +23,33 @@
  *
  * SPDX-License-Identifier: MIT
  */
-export function readCardBack () {
-  const cardBack = (((document.getElementsByClassName('cardback')[0]).children)[0]).textContent
-  const speech = new SpeechSynthesisUtterance(cardBack)
-  speech.voice = window.speechSynthesis.getVoices().filter(function (v) { return v.voiceURI === 'Google UK English Female' })[0]
-  window.speechSynthesis.speak(speech)
+function setSpeech () {
+  return new Promise(
+    (resolve, reject) => {
+      const interval = setInterval(() => {
+        if (window.speechSynthesis.getVoices().length > 0) {
+          resolve()
+          clearInterval(interval)
+        }
+      }, 15)
+    }
+  )
+}
+
+export function readCardBack (cardId) {
+  const promiseVoices = setSpeech()
+  promiseVoices.then(() => {
+    const synth = window.speechSynthesis
+    const voices = synth.getVoices()
+    const cardBack = document.getElementById('cardback_' + cardId).textContent
+
+    const speech = new SpeechSynthesisUtterance()
+
+    speech.voice = voices.filter(function (v) {
+      return v.voiceURI === 'Google UK English Female'
+    })[0]
+
+    speech.text = cardBack
+    synth.speak(speech)
+  })
 }
