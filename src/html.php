@@ -2,6 +2,7 @@
 
 //  Aeppelkaka, a program which can help a stundent learning facts.
 //  Copyright (C) 2003, 2006, 2021, 2022, 2023, 2024 Christian von Schultz
+//  Copyright (C) 2024 Veronika von Schultz
 //
 //  Permission is hereby granted, free of charge, to any person
 //  obtaining a copy of this software and associated documentation
@@ -124,7 +125,7 @@ function print_card($card_id, $cardfront, $cardback, $backvisible = true)
 
     if (!$backvisible) {
         $inputs = sprintf(
-            '<input autocomplete="off" id="testinput_%d" type="text" ' .
+            '<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="testinput_%d" type="text" ' .
             'style="width: 100%%; font-family: monospace; font-size: smaller"/>',
             $card_id
         );
