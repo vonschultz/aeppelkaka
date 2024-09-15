@@ -124,7 +124,7 @@ function print_card($card_id, $cardfront, $cardback, $backvisible = true)
 
     if (!$backvisible) {
         $inputs = sprintf(
-            '<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="testinput_%d" class="fake_password_input" type="password" ' .
+            '<input autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" id="testinput_%d" type="text" ' .
             'style="width: 100%%; font-family: monospace; font-size: smaller"/>',
             $card_id
         );

@@ -29,12 +29,10 @@ import $ from 'jquery'
 import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
 import { updateCountdown } from './countdown.js'
-import { convertFakePasswordInput } from './inputtypeconversion.js'
 
 window.showCardback = showCardback
 window.updateCountdown = updateCountdown
 
 $(aeppelchessRun)
-$(convertFakePasswordInput)
 
 console.log('This is Aeppelkaka!')
