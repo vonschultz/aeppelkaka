@@ -1,5 +1,5 @@
 /*  Aeppelkaka, a program which can help a stundent learning facts.
- *  Copyright (C) 2021, 2024 Christian von Schultz
+ *  Copyright (C) 2024 Veronika von Schultz
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
