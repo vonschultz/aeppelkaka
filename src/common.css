@@ -108,6 +108,9 @@ div.error a { background: rgb(255, 225, 225);
 
 h2 { padding-top: 3mm; }
 
+button.speakButton { height: 20px; 
+                     margin-left: 10px; }
+
 p.cardfronttitle { font-weight: bold;
                    font-size: smaller;
                    margin-left: 1cm;

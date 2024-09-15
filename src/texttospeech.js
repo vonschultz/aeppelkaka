@@ -23,8 +23,8 @@
  *
  * SPDX-License-Identifier: MIT
  */
-export function textToSpeech (value) {
+export function readCardBack () {
   const speech = new SpeechSynthesisUtterance()
-  speech.text = value
+  speech.text = (((document.getElementsByClassName('cardback')[0]).children)[0]).textContent
   window.speechSynthesis.speak(speech)
 }
