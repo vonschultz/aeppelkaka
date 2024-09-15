@@ -112,7 +112,7 @@ function print_card($card_id, $cardfront, $cardback, $backvisible = true)
         $card_id,
         $cardfront
     );
-    echo "<p class=\"cardbacktitle\">" . $l["Back"] . "</p>\n";
+    echo "<p class=\"cardbacktitle\">" . $l["Back"] . "<button style=\"height: 20px; margin-left: 10px;\" id=\"speakBack\" onclick=\"javascript:textToSpeech((((document.getElementsByClassName('cardback')[0]).children)[0]).textContent)\">Play sound</button></p>\n";
 
     if ($backvisible) {
         printf("<div id=\"cardback_%d\" class=\"cardback\"><p>", $card_id);

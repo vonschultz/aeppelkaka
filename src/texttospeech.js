@@ -23,18 +23,8 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import './common.css'
-
-import $ from 'jquery'
-import { aeppelchessRun } from './aeppelchess.js'
-import { showCardback } from './showcardback.js'
-import { updateCountdown } from './countdown.js'
-import { textToSpeech } from './texttospeech.js'
-
-window.showCardback = showCardback
-window.updateCountdown = updateCountdown
-window.textToSpeech = textToSpeech
-
-$(aeppelchessRun)
-
-console.log('This is Aeppelkaka!')
+export function textToSpeech (value) {
+  const speech = new SpeechSynthesisUtterance()
+  speech.text = value
+  window.speechSynthesis.speak(speech)
+}
