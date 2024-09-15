@@ -45,10 +45,22 @@ export function readCardBack (cardId) {
 
     const speech = new SpeechSynthesisUtterance()
 
-    speech.voice = voices.filter(function (v) {
+    let filteredVoices = voices.filter(function (v) {
       return v.voiceURI === 'Google UK English Female'
-    })[0]
+    })
 
+    if (filteredVoices.length === 0) {
+      filteredVoices = voices.filter(function (v) {
+        return v.lang === 'en-GB'
+      })
+    }
+
+    if (filteredVoices.length === 0) {
+      console.log('No voice found for text-to-speech.')
+      return
+    }
+
+    speech.voice = filteredVoices[0]
     speech.text = cardBack
     synth.speak(speech)
   })
