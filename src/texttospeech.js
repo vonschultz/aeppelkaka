@@ -24,7 +24,8 @@
  * SPDX-License-Identifier: MIT
  */
 export function readCardBack () {
-  const speech = new SpeechSynthesisUtterance()
-  speech.text = (((document.getElementsByClassName('cardback')[0]).children)[0]).textContent
+  const cardBack = (((document.getElementsByClassName('cardback')[0]).children)[0]).textContent
+  const speech = new SpeechSynthesisUtterance(cardBack)
+  speech.voice = window.speechSynthesis.getVoices().filter(function (v) { return v.voiceURI === 'Google UK English Female' })[0]
   window.speechSynthesis.speak(speech)
 }
