@@ -36,7 +36,7 @@ function setSpeech () {
   )
 }
 
-export function readCardBack (cardId) {
+export function readCardBack (cardId, lang) {
   const promiseVoices = setSpeech()
   promiseVoices.then(() => {
     const synth = window.speechSynthesis
@@ -51,17 +51,22 @@ export function readCardBack (cardId) {
 
     if (filteredVoices.length === 0) {
       filteredVoices = voices.filter(function (v) {
-        return v.lang === 'en-GB'
+        return v.lang === lang
       })
     }
 
     if (filteredVoices.length === 0) {
-      console.log('No voice found for text-to-speech.')
+      window.alert('No voice found for text-to-speech.')
       return
     }
 
     speech.voice = filteredVoices[0]
+    speech.lang = lang
     speech.text = cardBack
+    speech.rate = 1
+    speech.pitch = 1
+    speech.volume = 1
+
     synth.speak(speech)
   })
 }

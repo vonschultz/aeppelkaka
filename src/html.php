@@ -115,7 +115,8 @@ function print_card($card_id, $cardfront, $cardback, $backvisible = true)
     );
     echo "<p class=\"cardbacktitle\">" . $l["Back"] . 
         "<button class=\"speakButton\" onclick=\"javascript:event.preventDefault(); 
-        readCardBack(" . $card_id . ")\">Play back side</button></p>\n";
+        readCardBack(" . $card_id . ", 'en-GB')\">" . $l["Play back"] . 
+        "</button></p>\n";
 
     if ($backvisible) {
         printf("<div id=\"cardback_%d\" class=\"cardback\"><p>", $card_id);
