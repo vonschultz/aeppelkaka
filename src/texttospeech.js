@@ -51,6 +51,18 @@ export function readCardBack (cardId, lang) {
 
     if (filteredVoices.length === 0) {
       filteredVoices = voices.filter(function (v) {
+        return v.voiceURI === 'Kate'
+      })
+    }
+
+    if (filteredVoices.length === 0) {
+      filteredVoices = voices.filter(function (v) {
+        return v.voiceURI === 'Daniel'
+      })
+    }
+
+    if (filteredVoices.length === 0) {
+      filteredVoices = voices.filter(function (v) {
         return v.lang === lang
       })
     }
