@@ -1,5 +1,6 @@
 /*  Aeppelkaka, a program which can help a stundent learning facts.
  *  Copyright (C) 2021, 2024 Christian von Schultz
+ *  Copyright (C) 2024 Veronika von Schultz
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
@@ -29,9 +30,11 @@ import $ from 'jquery'
 import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
 import { updateCountdown } from './countdown.js'
+import { readCardBack } from './texttospeech.js'
 
 window.showCardback = showCardback
 window.updateCountdown = updateCountdown
+window.readCardBack = readCardBack
 
 $(aeppelchessRun)
 
