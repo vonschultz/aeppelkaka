@@ -188,12 +188,6 @@ $url = path_join_urls('..', $url);
 $url['this'] = 'learncard';
 $url['thislesson'] = './';
 
-if (!empty($card_id)) {
-    $url['card'] = array(
-        'removecard' => sprintf('removecard/card=%d', $card_id)
-    );
-}
-
 $smarty = get_smarty();
 $smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/addcard");

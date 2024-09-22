@@ -209,7 +209,7 @@ function search_form()
 // Returns a prepared statement, or false if we should abort the search.
 function get_prepared_statement($db)
 {
-    global $card_id, $cardfront, $cardback, $searchnew, $searchlearned, $mysqlfulltext;
+    global $b, $card_id, $cardfront, $cardback, $searchnew, $searchlearned, $mysqlfulltext;
 
     $query  = "SELECT cards.card_id";
     $bound_params = [];
@@ -225,10 +225,9 @@ function get_prepared_statement($db)
 
     $query .= "FROM cards JOIN lesson2cards ";
     $query .= "ON lesson2cards.card_id = cards.card_id ";
-    $query .= "WHERE 1 ";
-    // The "1" doesn't really do anything in the query, it's here so
-    // that we may assume that we should start a new condition with
-    // "AND".
+    $query .= "WHERE lesson2cards.lesson_id=? ";
+    $bound_params[] = $b["lesson"];
+    $bound_param_types .= "i";
 
     if (!empty($card_id)) {
         $query .= "AND cards.card_id=? ";
