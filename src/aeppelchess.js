@@ -51,7 +51,7 @@ function nagsEqual (nag1, nag2) {
   if (nag1 === null || nag1 === undefined) {
     nag1 = []
   }
-  if (nag2 === null || nag2 == undefined) {
+  if (nag2 === null || nag2 === undefined) {
     nag2 = []
   }
   return _.isEqual(nag1, nag2)

@@ -1,6 +1,6 @@
 {
   "name": "aeppelkaka",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "description": "A card-based system for learning facts.",
   "main": "index.js",
