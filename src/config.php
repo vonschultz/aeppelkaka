@@ -803,6 +803,8 @@ function get_smarty()
         $B['smarty']->assign('isadmin', is_admin());
         $B['smarty']->assign('manifest', $c['manifest']);
 
+        $B['smarty']->assign('plugins', array());
+
         $B['smarty']->registerPlugin(
             Smarty::PLUGIN_MODIFIER,
             'sprintf',

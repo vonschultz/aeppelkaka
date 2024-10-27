@@ -25,6 +25,7 @@
     ],
     "license": "MIT",
     "require": {
-        "smarty/smarty": "^5.3"
+        "smarty/smarty": "^5.3",
+        "justinrainbow/json-schema": "^6.0"
     }
 }

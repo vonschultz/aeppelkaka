@@ -113,3 +113,6 @@ $l["lesson repetition algorithms"] = array(
 
 $l['is sharing with you.'] = "is sharing some cards with you.";
 $l['Import cards'] = "Import cards.";
+
+$l["Enable Aeppelchess plugin"] = "Enable the chess plugin";
+$l["Chessboard width:"] = "Width of chess board (pixels)";

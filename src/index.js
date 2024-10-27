@@ -25,7 +25,7 @@
  */
 import './common.css'
 
-import $ from 'jquery'
+import './pluginsettings.js'
 import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
 import { updateCountdown } from './countdown.js'
@@ -33,6 +33,11 @@ import { updateCountdown } from './countdown.js'
 window.showCardback = showCardback
 window.updateCountdown = updateCountdown
 
-$(aeppelchessRun)
+window.loadPlugins = function (plugins) {
+  const runners = { aeppelchess: aeppelchessRun }
+  for (const pluginName in plugins) {
+    runners[pluginName](plugins[pluginName])
+  }
+}
 
 console.log('This is Aeppelkaka!')

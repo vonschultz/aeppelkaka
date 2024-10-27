@@ -204,7 +204,8 @@ function set_lesson($lesson_filename)
         "lesson_id, " .
         "lesson_filename, " .
         "lesson_name, " .
-        "repetition_algorithm " .
+        "repetition_algorithm, " .
+        "plugins " .
         "FROM lessons WHERE lesson_filename=? AND user_id=?"
     );
     $stmt->bind_param("si", $lesson_filename, $_COOKIE['user_id']);
@@ -212,7 +213,8 @@ function set_lesson($lesson_filename)
         $lesson_id,
         $lesson_filename,
         $lesson_name,
-        $repetition_algorithm
+        $repetition_algorithm,
+        $plugins
     );
     $stmt->execute();
     $stmt->store_result();
@@ -222,6 +224,8 @@ function set_lesson($lesson_filename)
     }
 
     $stmt->fetch();
+    $plugins = json_decode($plugins ?? "{}");
+    $b['lesson plugins'] = $plugins;
 
     $b["lesson"] = $lesson_id;
     $b["lesson filename"] = $lesson_filename;
@@ -232,6 +236,7 @@ function set_lesson($lesson_filename)
     $smarty->assign('lesson_id', $b['lesson']);
     $smarty->assign('lesson_name', $b['lesson name']);
     $smarty->assign('lesson_filename', $b['lesson filename']);
+    $smarty->assign('plugins', $b['lesson plugins']);
 
     $url['lesson'] = array(
         'addcard' => "$lesson_filename/addcard",

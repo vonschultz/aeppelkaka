@@ -259,6 +259,59 @@ if ($action == "properties") {
     echo "</table>\n";
     end_form();
 
+    $pluginsettings_schema = json_decode(
+        file_get_contents('pluginsettings-schema.json')
+    );
+    begin_form("properties", id: "pluginSettings");
+    echo "<table>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <th><label for=\"enable_aeppelchess\">" .
+        $l["Enable Aeppelchess plugin"] .
+        "</label></th>\n"
+    );
+    echo "    <th>";
+    echo (
+        '<input' .
+        ' type="checkbox"' .
+        ' id="enable_aeppelchess"' .
+        ' name="enable_aeppelchess"' .
+        ' class="enable plugin aeppelchess"'
+    );
+    if (isset($b['lesson plugins']->aeppelchess)) {
+        echo "checked ";
+    }
+    echo "/></th>\n";
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <td><label for=\"aeppelchess_width\">" .
+        $l["Chessboard width:"] .
+        "</label></td>\n"
+    );
+    printf(
+        "    <td>%s</td>\n",
+        input_using_schema(
+            property: 'aeppelchess.width',
+            schema: $pluginsettings_schema,
+            value: $b['lesson plugins']->aeppelchess->width ?? null,
+            class: 'plugin aeppelchess',
+        )
+    );
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    printf(
+        "    <td><input type=\"submit\" value=\"%s\" /></td>\n",
+        $l["submit changes"]
+    );
+    printf(
+        "    <td><input type=\"reset\" value=\"%s\" /></td>\n",
+        $l["reset"]
+    );
+    echo "  </tr>\n";
+    echo "</table>\n";
+    end_form();
+
     printf(
         "<h2>" . $l["Remove %s"] . "</h2>\n",
         lesson_user()

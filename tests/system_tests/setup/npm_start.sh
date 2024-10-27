@@ -42,7 +42,11 @@ function secret_envsubst()
 npm install
 npm run start
 cp .htaccess "$PWD/dist/"
-find src -maxdepth 1 -mindepth 1 -name '*.php' -not -name config.php \
+find src -maxdepth 1 -mindepth 1 \
+     '(' \
+     -name '*schema.json' -o \
+     -name '*.php' -not -name config.php \
+     ')' \
      -execdir cp -v '{}' "$PWD/dist/" ';'
 envsubst '
     $ADMIN_USER_ID

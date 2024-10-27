@@ -108,12 +108,49 @@ if ($router("GET $base_path/{lesson}/cards.json")) {
         status: "200 OK",
         body: $cards
     );
+} elseif ($router("PUT $base_path/{lesson}/pluginsettings.json")) {
+    assert_lesson($router->lesson);
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    $validator = new JsonSchema\Validator();
+    $validator->validate($data, (object)[
+        '$ref' => 'file://' . realpath('pluginsettings-schema.json')
+    ]);
+
+    if (!$validator->isValid()) {
+        $errors = array();
+        foreach ($validator->getErrors() as $error) {
+            $errors[] = $error['message'];
+        }
+        exit_json(
+            status: "400 Bad Request",
+            body: array(
+                "success" => false,
+                "data" => $data,
+                "error" => implode("\n", $errors),
+                "errors" => $validator->getErrors()
+            )
+        );
+    }
+    $db = get_db();
+    $stmt = $db->prepare("UPDATE lessons SET plugins=? WHERE lesson_id=?");
+    $stmt->bind_param("si", json_encode($data), $b["lesson"]);
+    $stmt->execute();
+    exit_json(
+        status: "200 OK",
+        body: array(
+            "success" => true,
+            "valid" => $validator->isValid(),
+        )
+    );
 } else {
     exit_json(
         status: "404 Not Found",
         body: array(
             "request" => $request,
-            "base_path" => $base_path
+            "base_path" => $base_path,
+            "error" => "Not found"
         )
     );
 }

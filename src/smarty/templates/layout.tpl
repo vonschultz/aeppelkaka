@@ -213,6 +213,7 @@ YAHOO.util.Event.onDOMReady(function () {ldelim}
     );
     theMenuBar.render(document.body);
   {rdelim}
+  loadPlugins({$plugins|json_encode:16 nofilter});
 {if $focus_element}
   document.getElementById("{$focus_element|escape}").focus();
 {/if}

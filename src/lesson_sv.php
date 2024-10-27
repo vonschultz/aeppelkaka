@@ -109,3 +109,6 @@ $l["lesson repetition algorithms"] = array(
 
 $l['is sharing with you.'] = "delar med sig av sina kort till dig.";
 $l['Import cards'] = "Importera kort.";
+
+$l["Enable Aeppelchess plugin"] = "Aktivera schackfunktioner";
+$l["Chessboard width:"] = "Schackbrädets storlek i pixlar";
