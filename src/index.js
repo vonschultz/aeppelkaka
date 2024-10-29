@@ -25,13 +25,12 @@
  */
 import './common.css'
 
+import './countdown.js'
 import './pluginsettings.js'
 import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
-import { updateCountdown } from './countdown.js'
 
 window.showCardback = showCardback
-window.updateCountdown = updateCountdown
 
 window.loadPlugins = function (plugins) {
   const runners = { aeppelchess: aeppelchessRun }
