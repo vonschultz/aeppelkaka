@@ -366,10 +366,10 @@ if ($action == "properties") {
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .
         "  AND created = CURDATE() " .
-        "  AND expires = CURDATE() + 1) AS tomorrow, " .
+        "  AND expires = CURDATE() + INTERVAL 1 DAY) AS tomorrow, " .
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .
-        "  AND created = CURDATE() + 1 " .
+        "  AND created = CURDATE() + INTERVAL 1 DAY " .
         "  AND expires IS NULL) AS new_tomorrow, " .
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .
