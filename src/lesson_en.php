@@ -81,8 +81,6 @@ $l["number of new tomorrow cards:"] = "Number of new cards postponed to tomorrow
 $l["list label"] = "You may now:";
 $l["Add card (%url)"] = "<a href=\"%s\">Add a new card</a>";
 $l["Learn new (%url)"] = "<a href=\"%s\">Learn the new cards</a>";
-$l["Park new (%url)"] = "<a href=\"%s\">Postpone the new cards and do them tomorrow instead</a>";
-$l["Unpark new (%url)"] = "<a href=\"%s\">Revive postponed cards and do them today instead</a>";
 $l["Test expired (%url)"] = (
     "<a href=\"%s\">Test if you sill " .
     "know the expired cards</a>"

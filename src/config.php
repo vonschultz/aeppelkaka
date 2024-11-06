@@ -74,7 +74,6 @@ $c["max inactive time"] = 60; // minutes
 
 // Default algorithm:
 $c["default repetition algorithm"] = 3;   // age of cards goes like 3^t.
-$c["default hand size"] = 8;  // number of new cards you can comfortly handle
 
 // Do not edit:
 

@@ -108,6 +108,69 @@ if ($router("GET $base_path/{lesson}/cards.json")) {
         status: "200 OK",
         body: $cards
     );
+} elseif ($router("PUT $base_path/{lesson}/parking.json")) {
+    assert_lesson($router->lesson);
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    $validator = new JsonSchema\Validator();
+    $validator->validate(
+        $data,
+        json_decode(file_get_contents("parking-schema.json"))
+    );
+
+    if (!$validator->isValid()) {
+        $errors = array();
+        foreach ($validator->getErrors() as $error) {
+            $errors[] = $error['message'];
+        }
+        exit_json(
+            status: "400 Bad Request",
+            body: array(
+                "success" => false,
+                "data" => $data,
+                "error" => implode("\n", $errors),
+                "errors" => $validator->getErrors()
+            )
+        );
+    }
+
+    $db = get_db();
+    $db->begin_transaction();
+    try {
+        $stmt = $db->prepare(
+            "UPDATE lesson2cards " .
+            "SET created=(CURDATE() + INTERVAL 1 DAY) " .
+            "WHERE lesson_id = ? " .
+            "AND created <= CURDATE() AND expires IS NULL"
+        );
+        $stmt->bind_param("i", $b["lesson"]);
+        $stmt->execute();
+
+        if ($data->new_cards > 0) {
+            $stmt = $db->prepare(
+                "UPDATE lesson2cards " .
+                "SET created=CURDATE() " .
+                "WHERE lesson_id = ? " .
+                "AND created = (CURDATE() + INTERVAL 1 DAY) AND expires IS NULL " .
+                "ORDER BY card_id LIMIT ?"
+            );
+            $stmt->bind_param("ii", $b["lesson"], $data->new_cards);
+            $stmt->execute();
+        }
+        $db->commit();
+    } catch (mysqli_sql_exception $exception) {
+        $db->rollback();
+        throw $exception;
+    }
+
+    exit_json(
+        status: "200 OK",
+        body: array(
+            "success" => true,
+            "valid" => $validator->isValid(),
+        )
+    );
 } elseif ($router("PUT $base_path/{lesson}/pluginsettings.json")) {
     assert_lesson($router->lesson);
 

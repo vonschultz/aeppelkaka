@@ -121,31 +121,6 @@ function remove_lesson()
 
 //* void main(void), so to speak
 
-if ($action == "parknew") {
-    $db = get_db();
-    $stmt = $db->prepare(
-        "UPDATE lesson2cards JOIN lessons USING(lesson_id) " .
-        "SET created=(CURDATE() + INTERVAL 1 DAY) " .
-        "WHERE user_id = ? " .
-        "AND created <= CURDATE() AND expires IS NULL"
-    );
-    $stmt->bind_param("i", $_COOKIE['user_id']);
-    $stmt->execute();
-}
-
-if ($action == "unparknew") {
-    $db = get_db();
-    $stmt = $db->prepare(
-        "UPDATE lesson2cards " .
-        "SET created=CURDATE() " .
-        "WHERE lesson_id = ? " .
-        "AND created = (CURDATE() + INTERVAL 1 DAY) AND expires IS NULL " .
-        "ORDER BY card_id LIMIT ?"
-    );
-    $stmt->bind_param("ii", $b["lesson"], $c["default hand size"]);
-    $stmt->execute();
-}
-
 if ($action == "properties") {
     $ln = false;     // true if lesson_name has been updated
     $lfn = false;    // true if lesson_filename has been updated

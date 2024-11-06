@@ -35,8 +35,26 @@
     <td headers="num">{$number_of_cards}</td>
   </tr>
   <tr>
+{if $number_of_new_cards + $number_of_new_tomorrow_cards > 0}
+    <td id="new">{strip}
+      <label for="number_of_new_cards">
+        {$l['number of new cards:']}
+      </label>
+    {/strip}</td>
+    <td headers="new">
+      <input
+        id="number_of_new_cards"
+        max="{$number_of_new_tomorrow_cards + $number_of_new_cards}"
+        min="0"
+        name="number_of_new_cards"
+        type="number"
+        value="{$number_of_new_cards}"
+      />
+    </td>
+{else}
     <td id="new">{$l['number of new cards:']}</td>
     <td headers="new">{$number_of_new_cards}</td>
+{/if}
   </tr>
   <tr>
     <td id="exp">{$l['number of expired cards:']}</td>
@@ -48,8 +66,21 @@
   </tr>
 {if $number_of_new_tomorrow_cards > 0}
   <tr>
-    <td id="tomorrow">{$l['number of new tomorrow cards:']}</td>
-    <td headers="tomorrow">{$number_of_new_tomorrow_cards}</td>
+    <td id="tomorrow">{strip}
+      <label for="number_of_new_tomorrow_cards">
+        {$l['number of new tomorrow cards:']}
+      </label>
+    {/strip}</td>
+    <td headers="tomorrow">
+      <input
+        id="number_of_new_tomorrow_cards"
+        max="{$number_of_new_tomorrow_cards + $number_of_new_cards}"
+        min="0"
+        name="number_of_new_tomorrow_cards"
+        type="number"
+        value="{$number_of_new_tomorrow_cards}"
+      />
+    </td>
   </tr>
 {/if}
 </table>
@@ -59,10 +90,6 @@
 <li>{$l['Add card (%url)']|sprintf:$url.lesson.addcard nofilter}</li>
 {if $newexist}
 <li>{$l['Learn new (%url)']|sprintf:$url.lesson.learncard nofilter}</li>
-<li>{$l['Park new (%url)']|sprintf:$url.lesson.parknew nofilter}</li>
-{/if}
-{if $number_of_new_tomorrow_cards > 0}
-<li>{$l['Unpark new (%url)']|sprintf:$url.lesson.unparknew nofilter}</li>
 {/if}
 {if $expiredexist}
 <li>{$l['Test expired (%url)']|sprintf:$url.lesson.testexpired nofilter}</li>

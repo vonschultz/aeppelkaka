@@ -83,6 +83,8 @@ style="width: 100%; font-family: monospace; font-size: smaller"/>
   <script type="text/javascript">
 //<![CDATA[
 
+window.aeppelkakaUrls = {$url|json_encode nofilter}
+
 {function mitem enabled=1 indent=10}{capture name="mitem"}
 {ldelim}
   text: "{$thetext|escape:'javascript'}",
