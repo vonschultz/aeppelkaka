@@ -23,6 +23,9 @@
  *
  * SPDX-License-Identifier: MIT
  */
+
+import './texttospeech.css'
+
 function setSpeech () {
   return new Promise(
     (resolve, reject) => {
