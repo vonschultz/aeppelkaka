@@ -1,6 +1,6 @@
 {
   "name": "aeppelkaka",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "A card-based system for learning facts.",
   "main": "index.js",
@@ -11,7 +11,8 @@
   "standard": {
     "globals": [
       "Event",
-      "FormData"
+      "FormData",
+      "SpeechSynthesisUtterance"
     ]
   },
   "author": "Christian von Schultz",
