@@ -78,8 +78,6 @@ $l["number of new tomorrow cards:"] = "Antal kort bordlagda tills imorgon:";
 $l["list label"] = "Du kan nu:";
 $l["Add card (%url)"] = "<a href=\"%s\">Lägga till nya kort</a>";
 $l["Learn new (%url)"] = "<a href=\"%s\">Lära dig de nya korten</a>";
-$l["Park new (%url)"] = "<a href=\"%s\">Bordlägg de nya korten till i morgon</a>";
-$l["Unpark new (%url)"] = "<a href=\"%s\">Återta bordlagda kort och gör dem idag istället</a>";
 $l["Test expired (%url)"] = (
     "<a href=\"%s\">Testa om du fortfarande " .
     "kan de åldrade korten</a>"
@@ -109,3 +107,6 @@ $l["lesson repetition algorithms"] = array(
 
 $l['is sharing with you.'] = "delar med sig av sina kort till dig.";
 $l['Import cards'] = "Importera kort.";
+
+$l["Enable Aeppelchess plugin"] = "Aktivera schackfunktioner";
+$l["Chessboard width:"] = "Schackbrädets storlek i pixlar";

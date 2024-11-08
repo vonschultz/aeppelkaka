@@ -83,6 +83,8 @@ style="width: 100%; font-family: monospace; font-size: smaller"/>
   <script type="text/javascript">
 //<![CDATA[
 
+window.aeppelkakaUrls = {$url|json_encode nofilter}
+
 {function mitem enabled=1 indent=10}{capture name="mitem"}
 {ldelim}
   text: "{$thetext|escape:'javascript'}",
@@ -213,6 +215,7 @@ YAHOO.util.Event.onDOMReady(function () {ldelim}
     );
     theMenuBar.render(document.body);
   {rdelim}
+  loadPlugins({$plugins|json_encode:16 nofilter});
 {if $focus_element}
   document.getElementById("{$focus_element|escape}").focus();
 {/if}

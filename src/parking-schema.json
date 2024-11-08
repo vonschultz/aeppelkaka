@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vonschultz/aeppelkaka/raw/refs/heads/main/src/parking-schema.json",
+  "title": "Card parking",
+  "description": "Card parking for Aeppelkaka",
+  "type": "object",
+  "properties": {
+    "new_cards": {
+      "default": 0,
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": ["new_cards"],
+  "additionalProperties": false
+}

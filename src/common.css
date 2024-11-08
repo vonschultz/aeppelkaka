@@ -165,6 +165,8 @@ code { color: rgb(0, 128, 0);
               top: 0pt;
               margin: 0pt; }
 
+input:invalid { border: thick solid red; }
+
 input.dangerous { background: red;
                   color: black; 
                   border: 2pt outset yellow; }

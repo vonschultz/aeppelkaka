@@ -51,7 +51,7 @@ function nagsEqual (nag1, nag2) {
   if (nag1 === null || nag1 === undefined) {
     nag1 = []
   }
-  if (nag2 === null || nag2 == undefined) {
+  if (nag2 === null || nag2 === undefined) {
     nag2 = []
   }
   return _.isEqual(nag1, nag2)
@@ -102,7 +102,7 @@ function compareFrontAndBack (cardId, pgnview, pgnedit) {
   }
 }
 
-function aeppelchessRunCard (cardId) {
+function aeppelchessRunCard (cardId, settings) {
   $testinput = $('#testinput_' + cardId)
   $cardfront = $('#cardfront_' + cardId)
   $cardback = $('#cardback_' + cardId)
@@ -118,9 +118,11 @@ function aeppelchessRunCard (cardId) {
     menu.style.display = 'none'
   }
 
-  $cardfront.append(
-    '<div id="' + chesspgnedit + '" style="width: 300px"></div>'
-  )
+  const cardfrontDiv = document.createElement('div')
+  cardfrontDiv.id = chesspgnedit
+  cardfrontDiv.style.width = settings.width + 'px'
+  $cardfront.append(cardfrontDiv)
+
   const pgnconfig = {
     showCoords: false,
     theme: 'brown',
@@ -128,7 +130,10 @@ function aeppelchessRunCard (cardId) {
     showFen: false
   }
   const pgnedit = pgnEdit(chesspgnedit, { ...pgnconfig, timerTime: 1400 })
-  $cardback.append('<div id="' + chesspgnview + '" style="width: 300px"></div>')
+  const cardbackDiv = document.createElement('div')
+  cardbackDiv.id = chesspgnview
+  cardbackDiv.style.width = settings.width + 'px'
+  $cardback.append(cardbackDiv)
   pgnconfig.pgn = $cardback.text()
   const pgnview = pgnView(chesspgnview, pgnconfig)
 
@@ -178,16 +183,12 @@ function aeppelchessRunCard (cardId) {
   })
 }
 
-export function aeppelchessRun () {
-  if (document.getElementById('menu').textContent.match(/Chess/i)) {
-    for (const element of document.querySelectorAll('.cardback')) {
-      try {
-        aeppelchessRunCard(element.id.replace('cardback_', ''))
-      } catch (error) {
-        console.error(error)
-      }
+export function aeppelchessRun (settings) {
+  for (const element of document.querySelectorAll('.cardback')) {
+    try {
+      aeppelchessRunCard(element.id.replace('cardback_', ''), settings)
+    } catch (error) {
+      console.error(error)
     }
-  } else {
-    console.log('Chess content disabled on this page.')
   }
 }

@@ -205,15 +205,13 @@ if (check_time_for_next_action() == "continue") {
 
 $body = ob_get_clean();
 
+if (!empty($card_id)) {
+    assert_card($card_id);
+}
+
 $url = path_join_urls('..', $url);
 $url['this'] = 'learncard';
 $url['thislesson'] = './';
-
-if (!empty($card_id)) {
-    $url['card'] = array(
-        'removecard' => sprintf('removecard/card=%d', $card_id)
-    );
-}
 
 $smarty = get_smarty();
 if ($action === "short-term2long-term") {
@@ -222,7 +220,6 @@ if ($action === "short-term2long-term") {
 $smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/learncard");
 $smarty->assign('lesson_name', lesson_user());
-$smarty->assign('card_id', $card_id);
 $smarty->assign('body', $body);
 
 $smarty->assign('l', $l);

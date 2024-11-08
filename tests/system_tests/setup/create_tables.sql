@@ -33,7 +33,8 @@ CREATE TABLE `lessons` (
   `lesson_name` varchar(100) COLLATE utf8mb3_swedish_ci DEFAULT NULL,
   `lesson_filename` varchar(100) COLLATE utf8mb3_swedish_ci DEFAULT NULL,
   `user_id` int UNSIGNED NOT NULL DEFAULT '0',
-  `repetition_algorithm` tinyint UNSIGNED DEFAULT NULL
+  `repetition_algorithm` tinyint UNSIGNED DEFAULT NULL,
+  `plugins` json DEFAULT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_swedish_ci;
 
 

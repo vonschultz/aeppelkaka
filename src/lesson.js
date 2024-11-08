@@ -1,6 +1,5 @@
 /*  Aeppelkaka, a program which can help a stundent learning facts.
  *  Copyright (C) 2021, 2024 Christian von Schultz
- *  Copyright (C) 2024 Veronika von Schultz
  *
  *  Permission is hereby granted, free of charge, to any person
  *  obtaining a copy of this software and associated documentation
@@ -24,21 +23,43 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import './common.css'
 
-import './countdown.js'
-import './lesson.js'
-import './pluginsettings.js'
-import { aeppelchessRun } from './aeppelchess.js'
-import { showCardback } from './showcardback.js'
+import $ from 'jquery'
+import { apiCallWithErrorHandling } from './api_utils.js'
 
-window.showCardback = showCardback
-
-window.loadPlugins = function (plugins) {
-  const runners = { aeppelchess: aeppelchessRun }
-  for (const pluginName in plugins) {
-    runners[pluginName](plugins[pluginName])
+async function parking (newCards) {
+  const requestOptions = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ new_cards: newCards })
+  }
+  const response = await apiCallWithErrorHandling(
+    window.aeppelkakaUrls.lesson['parking.json'],
+    requestOptions
+  )
+  console.log(response)
+  if (response.success) {
+    window.location.reload()
   }
 }
 
-console.log('This is Aeppelkaka!')
+async function parkNew (event) {
+  await parking(parseInt(event.target.value))
+}
+
+async function unpark (event) {
+  await parking(parseInt(event.target.max) - parseInt(event.target.value))
+}
+
+$(document).ready(function () {
+  const newcards = document.getElementById('number_of_new_cards')
+  const tomorrow = document.getElementById('number_of_new_tomorrow_cards')
+  if (newcards) {
+    newcards.addEventListener('change', parkNew)
+  }
+  if (tomorrow) {
+    tomorrow.addEventListener('change', unpark)
+  }
+})

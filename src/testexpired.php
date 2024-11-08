@@ -96,22 +96,19 @@ if ($debug) {
 
 $body = ob_get_clean();
 
+if (!empty($card_id)) {
+    assert_card($card_id);
+}
+
 $url = path_join_urls('..', $url);
 $url['this'] = 'learncard';
 $url['thislesson'] = './';
-
-if (!empty($card_id)) {
-    $url['card'] = array(
-        'removecard' => sprintf('removecard/card=%d', $card_id)
-    );
-}
 
 $smarty = get_smarty();
 $smarty->assign('focus_element', sprintf('testinput_%d', $card_id));
 $smarty->assign('title', sprintf($l["page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/testexpired");
 $smarty->assign('lesson_name', lesson_user());
-$smarty->assign('card_id', $card_id);
 $smarty->assign('body', $body);
 $smarty->assign('l', $l);
 $smarty->assign('url', $url);

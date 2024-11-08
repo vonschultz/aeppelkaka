@@ -121,31 +121,6 @@ function remove_lesson()
 
 //* void main(void), so to speak
 
-if ($action == "parknew") {
-    $db = get_db();
-    $stmt = $db->prepare(
-        "UPDATE lesson2cards JOIN lessons USING(lesson_id) " .
-        "SET created=(CURDATE() + INTERVAL 1 DAY) " .
-        "WHERE user_id = ? " .
-        "AND created <= CURDATE() AND expires IS NULL"
-    );
-    $stmt->bind_param("i", $_COOKIE['user_id']);
-    $stmt->execute();
-}
-
-if ($action == "unparknew") {
-    $db = get_db();
-    $stmt = $db->prepare(
-        "UPDATE lesson2cards " .
-        "SET created=CURDATE() " .
-        "WHERE lesson_id = ? " .
-        "AND created = (CURDATE() + INTERVAL 1 DAY) AND expires IS NULL " .
-        "ORDER BY card_id LIMIT ?"
-    );
-    $stmt->bind_param("ii", $b["lesson"], $c["default hand size"]);
-    $stmt->execute();
-}
-
 if ($action == "properties") {
     $ln = false;     // true if lesson_name has been updated
     $lfn = false;    // true if lesson_filename has been updated
@@ -259,6 +234,59 @@ if ($action == "properties") {
     echo "</table>\n";
     end_form();
 
+    $pluginsettings_schema = json_decode(
+        file_get_contents('pluginsettings-schema.json')
+    );
+    begin_form("properties", id: "pluginSettings");
+    echo "<table>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <th><label for=\"enable_aeppelchess\">" .
+        $l["Enable Aeppelchess plugin"] .
+        "</label></th>\n"
+    );
+    echo "    <th>";
+    echo (
+        '<input' .
+        ' type="checkbox"' .
+        ' id="enable_aeppelchess"' .
+        ' name="enable_aeppelchess"' .
+        ' class="enable plugin aeppelchess"'
+    );
+    if (isset($b['lesson plugins']->aeppelchess)) {
+        echo "checked ";
+    }
+    echo "/></th>\n";
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <td><label for=\"aeppelchess_width\">" .
+        $l["Chessboard width:"] .
+        "</label></td>\n"
+    );
+    printf(
+        "    <td>%s</td>\n",
+        input_using_schema(
+            property: 'aeppelchess.width',
+            schema: $pluginsettings_schema,
+            value: $b['lesson plugins']->aeppelchess->width ?? null,
+            class: 'plugin aeppelchess',
+        )
+    );
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    printf(
+        "    <td><input type=\"submit\" value=\"%s\" /></td>\n",
+        $l["submit changes"]
+    );
+    printf(
+        "    <td><input type=\"reset\" value=\"%s\" /></td>\n",
+        $l["reset"]
+    );
+    echo "  </tr>\n";
+    echo "</table>\n";
+    end_form();
+
     printf(
         "<h2>" . $l["Remove %s"] . "</h2>\n",
         lesson_user()
@@ -313,10 +341,10 @@ if ($action == "properties") {
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .
         "  AND created = CURDATE() " .
-        "  AND expires = CURDATE() + 1) AS tomorrow, " .
+        "  AND expires = CURDATE() + INTERVAL 1 DAY) AS tomorrow, " .
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .
-        "  AND created = CURDATE() + 1 " .
+        "  AND created = CURDATE() + INTERVAL 1 DAY " .
         "  AND expires IS NULL) AS new_tomorrow, " .
         "(SELECT COUNT(card_id) FROM `lesson2cards` " .
         "  WHERE lesson2cards.lesson_id = lessons.lesson_id " .

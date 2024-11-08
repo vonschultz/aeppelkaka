@@ -23,23 +23,19 @@
  *
  * SPDX-License-Identifier: MIT
  */
-var now = new Date();
-var event = new Date();
-event.setSeconds((now.getSeconds() + 30) % 60);
-event.setMinutes(now.getMinutes() + Math.floor((now.getSeconds() + 30)/60));
+import $ from 'jquery'
+const event = new Date(new Date().getTime() + 30 * 1000)
 
-var seconds = (event-now) / 1000;
-window.setTimeout("updateCountdown();", 1000);
-
-export function updateCountdown()
-{
-    if (document.getElementById('seconds') && document.getElementById('hide30')) {
-        now = new Date();
-        seconds = Math.round((event-now) / 1000);
-        document.getElementById('seconds').value = seconds;
-        window.setTimeout("updateCountdown();", 1000);
-        if (seconds <= 0) {
-            document.getElementById('hide30').style.setProperty('display', 'none', null);
-        }
+function updateCountdown () {
+  if (document.getElementById('seconds') && document.getElementById('hide30')) {
+    const now = new Date()
+    const seconds = Math.round((event - now) / 1000)
+    document.getElementById('seconds').value = seconds
+    window.setTimeout(updateCountdown, 1000)
+    if (seconds <= 0) {
+      document.getElementById('hide30').style.setProperty('display', 'none', null)
     }
+  }
 }
+
+$(updateCountdown)

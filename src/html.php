@@ -79,6 +79,42 @@ function inputtext($name, $default = true)
     echo "/>";
 }
 
+function input_using_schema($property, $schema, $value = null, ...$kwargs)
+{
+    $property_path = explode('.', $property);
+    $property_name = implode("_", $property_path);
+    $property_schema = $schema;
+    foreach ($property_path as $property_step) {
+        $property_schema = $property_schema->properties->{$property_step};
+    }
+    $attributes = array(
+        "type" => match ($property_schema->type ?? "string") {
+            "string" => "text",
+            "number" => "number",
+            "integer" => "number",
+        },
+        "name" => $property_name,
+        "id" => $property_name,
+    );
+    $value = $value ?? $property_schema->default ?? null;
+    if (isset($value)) {
+        $attributes['value'] = $value;
+    }
+    if (isset($property_schema->minimum)) {
+        $attributes['min'] = $property_schema->minimum;
+    }
+    if (isset($property_schema->maximum)) {
+        $attributes['max'] = $property_schema->maximum;
+    }
+    $attributes = array_merge($attributes, $kwargs);
+    $input_html = '<input ';
+    foreach ($attributes as $key => $value) {
+        $input_html .= sprintf("$key=\"%s\" ", htmlspecialchars($value));
+    }
+    $input_html .= ' />';
+    return $input_html;
+}
+
 // FIXME: $stylename and $alternate do not work.
 
 function nice_url($url)

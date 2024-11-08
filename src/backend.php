@@ -85,6 +85,14 @@ require_once("early_functions.php");
 //            graphs.
 //
 //*Card Functions:
+//   bool   set_card($card_id)
+//            Sets the card ID for future operations. Returns false if
+//            the card does not exist in the current lesson.
+//
+//   void   assert_card($card_id)
+//            Like set_card, but prints an error message if the card
+//            does not exist in the current lesson.
+//
 //   bool   is_old_card($entry)
 //            Tests if $entry is an old card.
 //
@@ -196,7 +204,8 @@ function set_lesson($lesson_filename)
         "lesson_id, " .
         "lesson_filename, " .
         "lesson_name, " .
-        "repetition_algorithm " .
+        "repetition_algorithm, " .
+        "plugins " .
         "FROM lessons WHERE lesson_filename=? AND user_id=?"
     );
     $stmt->bind_param("si", $lesson_filename, $_COOKIE['user_id']);
@@ -204,7 +213,8 @@ function set_lesson($lesson_filename)
         $lesson_id,
         $lesson_filename,
         $lesson_name,
-        $repetition_algorithm
+        $repetition_algorithm,
+        $plugins
     );
     $stmt->execute();
     $stmt->store_result();
@@ -214,6 +224,8 @@ function set_lesson($lesson_filename)
     }
 
     $stmt->fetch();
+    $plugins = json_decode($plugins ?? "{}");
+    $b['lesson plugins'] = $plugins;
 
     $b["lesson"] = $lesson_id;
     $b["lesson filename"] = $lesson_filename;
@@ -224,13 +236,13 @@ function set_lesson($lesson_filename)
     $smarty->assign('lesson_id', $b['lesson']);
     $smarty->assign('lesson_name', $b['lesson name']);
     $smarty->assign('lesson_filename', $b['lesson filename']);
+    $smarty->assign('plugins', $b['lesson plugins']);
 
     $url['lesson'] = array(
         'addcard' => "$lesson_filename/addcard",
         'removecard' => "$lesson_filename/removecard",
         'learncard' => "$lesson_filename/learncard",
-        'parknew' => "$lesson_filename/parknew",
-        'unparknew' => "$lesson_filename/unparknew",
+        'parking.json' => "$lesson_filename/parking.json",
         'testexpired' => "$lesson_filename/testexpired",
         'newlylearnt' => "$lesson_filename/newlylearnt",
         'graph' => "$lesson_filename/graph",
@@ -250,6 +262,54 @@ function assert_lesson($lesson_filename)
         exit;
     }
 }
+
+function set_card($card_id)
+{
+    global $b, $c, $url;
+
+    if (empty($b["lesson"]) || empty($card_id)) {
+        return false;
+    }
+
+    $db = get_db();
+    $stmt = $db->prepare(
+        "SELECT 1 FROM lesson2cards WHERE lesson_id=? AND card_id=?"
+    );
+    $stmt->bind_param("ii", $b["lesson"], $card_id);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows != 1) {
+        return false;
+    }
+
+    $stmt->free_result();
+
+    $url['card'] = array(
+        'removecard' => sprintf(
+            '%s/removecard/card=%d',
+            $b['lesson filename'],
+            $card_id
+        )
+    );
+
+    $smarty = get_smarty();
+    $smarty->assign('card_id', $card_id);
+
+    return true;
+}
+
+function assert_card($card_id)
+{
+    global $l;
+    if (!set_card($card_id)) {
+        error_page(
+            sprintf($l["Could not find card with ID %s"], $card_id)
+        );
+        exit;
+    }
+}
+
 
 // 
 

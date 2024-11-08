@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vonschultz/aeppelkaka/raw/refs/heads/main/src/pluginsettings-schema.json",
+  "title": "Plugin settings",
+  "description": "Plugin settings for Aeppelkaka",
+  "type": "object",
+  "properties": {
+    "aeppelchess": {
+      "type": "object",
+      "properties": {
+        "width": {
+          "default": 300,
+          "maximum": 8192,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": ["width"],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

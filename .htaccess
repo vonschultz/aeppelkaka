@@ -41,9 +41,7 @@ RewriteRule logout/?$ login.php?logout=true [L]
 RewriteRule ^([^/]+)/?$ lesson.php?lesson=$1
 RewriteRule ^([^/]+)/&(.+)$ lesson.php?lesson=$1&$2
 RewriteRule ^([^/]+)/properties$ lesson.php?lesson=$1&action=properties
-RewriteRule ^([^/]+)/parknew$ lesson.php?lesson=$1&action=parknew
-RewriteRule ^([^/]+)/unparknew$ lesson.php?lesson=$1&action=unparknew
-RewriteRule ^([^/]+)/cards.json$ exportcards.php?lesson=$1
+RewriteRule ^([^/]+)/.*\.json$ api.php?lesson=$1
 RewriteRule ^([^/]+)/statistics/?$ statistics.php?lesson=$1
 RewriteRule ^([^/]+)/statistics/(.*)$ statistics.php?lesson=$1&$2
 RewriteRule ^([^/]+)/addcard$ addcard.php?lesson=$1
