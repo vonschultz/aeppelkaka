@@ -31,11 +31,15 @@ import './lesson.js'
 import './pluginsettings.js'
 import { aeppelchessRun } from './aeppelchess.js'
 import { showCardback } from './showcardback.js'
+import { texttospeechRun } from './texttospeech.js'
 
 window.showCardback = showCardback
 
 window.loadPlugins = function (plugins) {
-  const runners = { aeppelchess: aeppelchessRun }
+  const runners = {
+    aeppelchess: aeppelchessRun,
+    texttospeech: texttospeechRun
+  }
   for (const pluginName in plugins) {
     runners[pluginName](plugins[pluginName])
   }

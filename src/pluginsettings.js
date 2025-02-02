@@ -28,6 +28,8 @@ import $ from 'jquery'
 import _ from 'lodash'
 import { apiCallWithErrorHandling } from './api_utils.js'
 
+const pluginsettingsSchema = require('./pluginsettings-schema.json')
+
 function pluginCheckboxChanged (event) {
   for (
     const checkbox of document.querySelectorAll(
@@ -41,6 +43,13 @@ function pluginCheckboxChanged (event) {
       )
     ) {
       input.disabled = !checkbox.checked
+    }
+    for (
+      const textarea of document.querySelectorAll(
+        ['textarea', ...classes].join('.') + ':not(.enable)'
+      )
+    ) {
+      textarea.disabled = !checkbox.checked
     }
   }
 }
@@ -59,6 +68,7 @@ async function pluginSettingsSubmit (event) {
   const pluginsettings = {}
   for (const plugin of plugins) {
     pluginsettings[plugin] = {}
+    const pluginSchema = pluginsettingsSchema.properties[plugin]
     for (const x of data.keys()) {
       if (x.startsWith(plugin + '_')) {
         let value = data.get(x)
@@ -70,7 +80,12 @@ async function pluginSettingsSubmit (event) {
             throw Error(input.validity.validationMessage)
           }
         }
-        pluginsettings[plugin][x.substring(plugin.length + 1)] = value
+        const pluginProperty = x.substring(plugin.length + 1)
+        if (pluginSchema.properties[pluginProperty].type === 'array') {
+          pluginsettings[plugin][pluginProperty] = value.split('\n')
+        } else {
+          pluginsettings[plugin][pluginProperty] = value
+        }
       }
     }
   }

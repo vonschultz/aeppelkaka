@@ -39,34 +39,30 @@ function setSpeech () {
   )
 }
 
-export function readCardBack (cardId, lang) {
+export function readCardBack (cardId) {
   const promiseVoices = setSpeech()
   promiseVoices.then(() => {
+    const settings = window.texttospeechSettings
     const synth = window.speechSynthesis
     const voices = synth.getVoices()
     const cardBack = document.getElementById('cardback_' + cardId).textContent
 
     const speech = new SpeechSynthesisUtterance()
 
-    let filteredVoices = voices.filter(function (v) {
-      return v.voiceURI === 'Google UK English Female'
-    })
+    let filteredVoices = []
 
-    if (filteredVoices.length === 0) {
-      filteredVoices = voices.filter(function (v) {
-        return v.voiceURI === 'Kate'
+    for (const voiceURI in settings.voiceURIs) {
+      filteredVoices = voices.filter((v) => {
+        return v.voiceURI === voiceURI
       })
+      if (filteredVoices.length > 0) {
+        break
+      }
     }
 
     if (filteredVoices.length === 0) {
       filteredVoices = voices.filter(function (v) {
-        return v.voiceURI === 'Daniel'
-      })
-    }
-
-    if (filteredVoices.length === 0) {
-      filteredVoices = voices.filter(function (v) {
-        return v.lang === lang
+        return v.lang === settings.lang
       })
     }
 
@@ -76,7 +72,7 @@ export function readCardBack (cardId, lang) {
     }
 
     speech.voice = filteredVoices[0]
-    speech.lang = lang
+    speech.lang = window.texttospeechSettings.lang
     speech.text = cardBack
     speech.rate = 1
     speech.pitch = 1
@@ -84,4 +80,23 @@ export function readCardBack (cardId, lang) {
 
     synth.speak(speech)
   })
+}
+
+export function texttospeechRun (settings) {
+  window.texttospeechSettings = settings
+  setSpeech()
+  for (const cardbacktitle of document.querySelectorAll('.cardbacktitle')) {
+    const cardId = cardbacktitle.id.replace('cardbacktitle_', '')
+    const button = document.createElement('button')
+    button.setAttribute('class', 'speakButton')
+    button.textContent = 'Play the back side'
+    cardbacktitle.appendChild(button)
+    button.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault()
+        readCardBack(cardId)
+      }
+    )
+  }
 }

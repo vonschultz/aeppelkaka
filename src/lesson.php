@@ -275,6 +275,61 @@ if ($action == "properties") {
     );
     echo "  </tr>\n";
     echo "  <tr>\n";
+    echo (
+        "    <th><label for=\"enable_texttospeech\">" .
+        $l["Enable text-to-speech plugin"] .
+        "</label></th>\n"
+    );
+    echo "    <th>";
+    echo (
+        '<input' .
+        ' type="checkbox"' .
+        ' id="enable_texttospeech"' .
+        ' name="enable_texttospeech"' .
+        ' class="enable plugin texttospeech"'
+    );
+    if (isset($b['lesson plugins']->texttospeech)) {
+        echo "checked ";
+    }
+    echo "/></th>\n";
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <td><label for=\"texttospeech_lang\">" .
+        $l["Text-to-speech language:"] .
+        "</label></td>\n"
+    );
+    printf(
+        "    <td>%s</td>\n",
+        input_using_schema(
+            property: 'texttospeech.lang',
+            schema: $pluginsettings_schema,
+            value: $b['lesson plugins']->texttospeech->lang ?? null,
+            class: 'plugin texttospeech',
+        )
+    );
+    echo "  </tr>\n";
+    echo "  <tr>\n";
+    echo (
+        "    <td><label for=\"texttospeech_voiceURIs\">" .
+        $l["Text-to-speech voiceURIs:"] .
+        "</label></td>\n"
+    );
+    printf(
+        "    <td><textarea" .
+        " id=\"texttospeech_voiceURIs\"" .
+        " name=\"texttospeech_voiceURIs\"" .
+        " class=\"plugin texttospeech\"" .
+        ">%s</textarea></td>\n",
+        htmlspecialchars(
+            implode(
+                "\n",
+                $b['lesson plugins']->texttospeech->voiceURIs ?? array()
+            )
+        )
+    );
+    echo "  </tr>\n";
+    echo "  <tr>\n";
     printf(
         "    <td><input type=\"submit\" value=\"%s\" /></td>\n",
         $l["submit changes"]
