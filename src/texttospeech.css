@@ -1,5 +1,5 @@
 /*  Aeppelkaka, a program which can help a stundent learning facts.
- *  Copyright (C) 2021, 2024 Christian von Schultz
+ *  Copyright (C) 2024 Christian von Schultz
  *  Copyright (C) 2024 Veronika von Schultz
  *
  *  Permission is hereby granted, free of charge, to any person
@@ -24,25 +24,6 @@
  *
  * SPDX-License-Identifier: MIT
  */
-import './common.css'
 
-import './countdown.js'
-import './lesson.js'
-import './pluginsettings.js'
-import { aeppelchessRun } from './aeppelchess.js'
-import { showCardback } from './showcardback.js'
-import { texttospeechRun } from './texttospeech.js'
-
-window.showCardback = showCardback
-
-window.loadPlugins = function (plugins) {
-  const runners = {
-    aeppelchess: aeppelchessRun,
-    texttospeech: texttospeechRun
-  }
-  for (const pluginName in plugins) {
-    runners[pluginName](plugins[pluginName])
-  }
-}
-
-console.log('This is Aeppelkaka!')
+button.speakButton { height: 20px;
+                     margin-left: 10px; }

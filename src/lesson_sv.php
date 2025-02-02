@@ -110,3 +110,9 @@ $l['Import cards'] = "Importera kort.";
 
 $l["Enable Aeppelchess plugin"] = "Aktivera schackfunktioner";
 $l["Chessboard width:"] = "Schackbrädets storlek i pixlar";
+
+$l["Enable text-to-speech plugin"] = "Aktivera uppläsningsfunktioner";
+$l["Text-to-speech language:"] = "Uppläsningsspråkets språkkod:";
+$l["Text-to-speech voiceURIs:"] = (
+    "Önskade röster (i föredragen ordning, en per rad):"
+);

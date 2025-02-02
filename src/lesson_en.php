@@ -114,3 +114,9 @@ $l['Import cards'] = "Import cards.";
 
 $l["Enable Aeppelchess plugin"] = "Enable the chess plugin";
 $l["Chessboard width:"] = "Width of chess board (pixels)";
+
+$l["Enable text-to-speech plugin"] = "Enable the text-to-speech plugin";
+$l["Text-to-speech language:"] = "Text-to-speech language code:";
+$l["Text-to-speech voiceURIs:"] = (
+    "Preferred voices (in priority order, one on each line):"
+);

@@ -17,6 +17,25 @@
       },
       "required": ["width"],
       "additionalProperties": false
+    },
+    "texttospeech": {
+      "type": "object",
+      "properties": {
+        "lang": {
+          "default": "en",
+          "minLength": 2,
+          "maxLength": 42,
+          "type": "string"
+        },
+        "voiceURIs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["lang", "voiceURIs"],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

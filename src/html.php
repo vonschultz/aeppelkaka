@@ -106,6 +106,12 @@ function input_using_schema($property, $schema, $value = null, ...$kwargs)
     if (isset($property_schema->maximum)) {
         $attributes['max'] = $property_schema->maximum;
     }
+    if (isset($property_schema->minLength)) {
+        $attributes['minlength'] = $property_schema->minLength;
+    }
+    if (isset($property_schema->maxLength)) {
+        $attributes['maxlength'] = $property_schema->maxLength;
+    }
     $attributes = array_merge($attributes, $kwargs);
     $input_html = '<input ';
     foreach ($attributes as $key => $value) {
@@ -149,7 +155,11 @@ function print_card($card_id, $cardfront, $cardback, $backvisible = true)
         $card_id,
         $cardfront
     );
-    echo "<p class=\"cardbacktitle\">" . $l["Back"] . "</p>\n";
+    printf(
+        "<p id=\"cardbacktitle_%d\" class=\"cardbacktitle\">%s</p>\n",
+        $card_id,
+        $l["Back"]
+    );
 
     if ($backvisible) {
         printf("<div id=\"cardback_%d\" class=\"cardback\"><p>", $card_id);
