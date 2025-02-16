@@ -626,7 +626,7 @@ $url['this'] = 'graph';
 $url['thislesson'] = './';
 
 $smarty = get_smarty();
-$smarty->assign('title', $l["graph page title %s"], lesson_user());
+$smarty->assign('title', sprintf($l["graph page title %s"], lesson_user()));
 $smarty->assign('relative_url', urlencode(lesson_filename()) . "/");
 $smarty->assign('lesson_name', lesson_user());
 $smarty->assign('body', $body);
