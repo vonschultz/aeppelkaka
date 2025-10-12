@@ -51,7 +51,7 @@ if (is_logged_in()) {
         $stmt = $db->prepare(
             "INSERT INTO sessions " .
             "(session_id, user_id, ip, session_start, session_last_active)" .
-            "values (?, ?, ?, NOW(), NOW())"
+            "values (?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())"
         );
         $stmt->bind_param(
             "sis",
@@ -134,7 +134,7 @@ if (!empty($_POST["username"]) && !empty($_POST["password"])) {
             $ins_stmt = $db->prepare(
                 "INSERT INTO sessions " .
                 "(session_id, user_id, ip, session_start, session_last_active)" .
-                "values (?, ?, ?, now(), now())"
+                "values (?, ?, ?, UTC_TIMESTAMP(), UTC_TIMESTAMP())"
             );
             $session_id = session_id();
             $ins_stmt->bind_param(

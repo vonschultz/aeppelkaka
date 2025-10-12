@@ -1031,8 +1031,8 @@ function expire_sessions()
 
     $stmt = $db->prepare(
         "DELETE FROM sessions " .
-        "WHERE session_start + INTERVAL ? MINUTE < NOW() " .
-        "OR session_last_active + INTERVAL ? MINUTE < NOW()"
+        "WHERE session_start + INTERVAL ? MINUTE < UTC_TIMESTAMP() " .
+        "OR session_last_active + INTERVAL ? MINUTE < UTC_TIMESTAMP()"
     );
     $stmt->bind_param("ss", $c['max session length'], $c['max inactive time']);
     $stmt->execute();

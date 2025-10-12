@@ -691,7 +691,7 @@ function load_config()
     // First we update the last_active part of 'sessions'.
     $db = get_db();
     $stmt = $db->prepare(
-        "UPDATE sessions SET session_last_active=NOW() " .
+        "UPDATE sessions SET session_last_active=UTC_TIMESTAMP() " .
         "WHERE user_id=? AND session_id=? AND ip=?"
     );
     $session_id = session_id();

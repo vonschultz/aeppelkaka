@@ -103,8 +103,8 @@ function is_logged_in()
     $stmt = $db->prepare(
         "SELECT 1 AS is_logged_in FROM sessions " .
         "WHERE user_id=? AND session_id=? " .
-        "AND NOW() < session_last_active + INTERVAL ? MINUTE " .
-        "AND NOW() < session_start + INTERVAL ? MINUTE"
+        "AND UTC_TIMESTAMP() < session_last_active + INTERVAL ? MINUTE " .
+        "AND UTC_TIMESTAMP() < session_start + INTERVAL ? MINUTE"
     );
     $session_id = session_id();
     $stmt->bind_param(
